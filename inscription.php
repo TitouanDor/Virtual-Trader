@@ -1,4 +1,10 @@
-<!DOCTYPE html>
+<?php
+    session_start();
+    if($_SESSION['valid'] == 0) {
+        echo ('Email deja utilise');
+    }
+?>
+
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
@@ -41,4 +47,4 @@
         </form>
     </div>
 </body>
-</html>
+
