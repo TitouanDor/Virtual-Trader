@@ -31,9 +31,9 @@ CREATE TABLE IF NOT EXISTS portefeuille (
     quantity INT NOT NULL DEFAULT 0,
     purchase_price DECIMAL(10, 2) NOT NULL,
     purchase_date DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (player_id) REFERENCES joueur(id) ON DELETE CASCADE,
-    FOREIGN KEY (stock_id) REFERENCES actions(id) ON DELETE CASCADE,
-    UNIQUE KEY (player_id, stock_id)
+    FOREIGN KEY (player_id) REFERENCES joueur(id) ON DELETE CASCADE
+    FOREIGN KEY (stock_id) REFERENCES actions(id) ON DELETE CASCADE
+
 );
 
 -- Table de l'historique des prix
@@ -46,8 +46,8 @@ CREATE TABLE IF NOT EXISTS historique (
     game_month INT NOT NULL,
     game_year INT NOT NULL,
     real_date DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (stock_id) REFERENCES actions(id) ON DELETE CASCADE,
-    FOREIGN KEY (player_id) REFERENCES joueur(id) ON DELETE CASCADE,
+    FOREIGN KEY (stock_id) REFERENCES actions(id) ON DELETE CASCADE
+    FOREIGN KEY (player_id) REFERENCES joueur(id) ON DELETE CASCADE
 
 );
 
@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS game_state (
     id INT AUTO_INCREMENT PRIMARY KEY,
     current_month INT NOT NULL DEFAULT 1,
     current_year INT NOT NULL DEFAULT 1,
-    last_update DATETIME DEFAULT CURRENT_TIMESTAMP,
+    last_update DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
 --Table du cours du marché
@@ -65,7 +65,7 @@ CREATE TABLE IF NOT EXISTS cours_marche (
     game_month INT NOT NULL,
     game_year INT NOT NULL,
     valeur_action INT NOT NULL,
-    FOREIGN KEY (stock_id) REFERENCES actions(id) ON DELETE CASCADE,
+    FOREIGN KEY (stock_id) REFERENCES actions(id) ON DELETE CASCADE
     
 );
 
