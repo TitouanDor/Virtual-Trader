@@ -7,20 +7,27 @@
 </head>
 <body>
 
-    <div name="box_connection" id="box_connection">
+    <div name="box_connection" class="box_connection">
         <p>Connection à Virtual-trader</p>
         <form action="phpfile\connection.php">
-            <label>
-                <input type="text" name="e-mail" placeholder="E-mail">
-            </label><br>
 
-            <label>
-                <input type="password" name="mdp" placeholder="mot de passe">
-            </label><br>
+            <div class="group-from">
+                <label>
+                    <input type="text" name="e-mail" placeholder="E-mail">
+                </label>
+            </div>
 
-            <label>
-                <input type="submit" value="Se connecter">
-            </label>
+            <div class="group-from">
+                <label>
+                    <input type="password" name="mdp" placeholder="mot de passe">
+                </label>
+            </div>
+
+            <div class="group-from">
+                <label>
+                    <input type="submit" value="Se connecter">
+                </label>
+            </div>
         </form>
 
         <p><a href="inscription.html">Inscription</a></p>
