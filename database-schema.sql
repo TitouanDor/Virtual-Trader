@@ -1,6 +1,5 @@
 -- Création de la base de données
 CREATE DATABASE IF NOT EXISTS virtual_trader;
-USE virtual_trader;
 
 -- Table des utilisateurs/joueurs
 CREATE TABLE IF NOT EXISTS joueur (

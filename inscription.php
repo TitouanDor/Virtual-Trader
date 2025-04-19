@@ -1,6 +1,6 @@
 <?php
     session_start();
-    if($_SESSION['valid'] == 0) {
+    if($_SESSION['valid'] == 1) {
         echo ('Email deja utilise');
     }
 ?>
@@ -12,9 +12,16 @@
     <link rel="stylesheet" href="CSSFile\inscription.css">
 </head>
 <body>
+<div>
+    <a href="index.html">
+    <button>
+        Retour
+    </button>
+    </a>
+</div>
     <div name="box_inscription" class="box_inscription">
         <p>Inscription à Virtual-trader</p>
-        <form action="phpfile\inscription.php" method="post">
+        <form action="inscriptionScript.php" method="post">
             <div class="group-from">
             <label>
                 <input type="text" name="prenom" placeholder="Prénom">
@@ -25,6 +32,12 @@
             <label>
                 <input type="text" name="nom" placeholder="Nom">
             </label>
+            </div>
+
+            <div class="group-from">
+                <label>
+                    <input type="text" name="username" placeholder="Nom d'utilisateur">
+                </label>
             </div>
 
             <div class="group-from">
