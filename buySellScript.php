@@ -4,6 +4,7 @@ if (!isset($_SESSION['id'])) {
     header("location: index.html");
     exit();
 }
+$player_id = $_SESSION['id'];
 // Check if stock ID, quantity and action are provided
 if (!isset($_POST['stock_id']) || !isset($_POST['quantity']) || !isset($_POST['action'])) {
     $_SESSION['error'] = "Invalid data provided.";
@@ -14,7 +15,6 @@ if (!isset($_POST['stock_id']) || !isset($_POST['quantity']) || !isset($_POST['a
 $stockId = $_POST['stock_id'];
 $quantity = $_POST['quantity'];
 $action = $_POST['action'];
-$player_id = $_SESSION['id'];
 
 try {
     // Database connection
@@ -31,13 +31,31 @@ try {
         header("Location: marcher.php");
         exit();
     }
-
+    //check if the player has lost
+    $portfolioValue = 0;
+    $portfolioReq = $bdd->prepare("SELECT p.quantity, a.prix FROM portefeuille p JOIN actions a ON p.stock_id = a.id WHERE p.player_id = ?");
+    $portfolioReq->execute([$player_id]);
+    $portfolio = $portfolioReq->fetchAll();
+    foreach ($portfolio as $stockInPortfolio) {
+      $portfolioValue += $stockInPortfolio['quantity'] * $stockInPortfolio['prix'];
+    }
     // Get player information
     $playerReq = $bdd->prepare("SELECT argent FROM joueur WHERE id = ?");
     $playerReq->execute([$player_id]);
     $player = $playerReq->fetch();
 
     if (!$player) {
+        $_SESSION['error'] = "Player not found.";
+        header("Location: marcher.php");
+        exit();
+    }
+    $portfolioValue += $player['argent'];
+    if ($portfolioValue < 1000) {
+        $_SESSION['lost'] = true;
+        $_SESSION['error'] = "You have lost the game because your portfolio value is under 1000€.";
+        header("Location: index.html");
+        exit();
+    }
         $_SESSION['error'] = "Player not found.";
         header("Location: marcher.php");
         exit();

@@ -1,0 +1,67 @@
+tests_to_do.txt
+
+Tests to Perform (New Cahier des Charges)
+
+I. Password Modification:
+    1. Access Password Change:
+        - Verify that there is a way to access the password change form.
+    2. Successful Password Change:
+        - Change the password to a new one.
+        - Verify that the new password is saved correctly in the database (hashed).
+        - Log in with the new password to confirm.
+    3. Password Change Failure:
+        - Try to change the password with invalid data (e.g., empty fields).
+        - Verify that an error message is displayed.
+    4. Security:
+        - Test that the password is well hashed in the database.
+
+II. Player Search and Tracking:
+    1. Player Search:
+        - Search for existing usernames.
+        - Search for non-existing usernames.
+        - Check if the search results are displayed correctly.
+    2. Player Tracking:
+        - Find a player.
+        - Verify that you can see their latest buy/sell actions.
+    3. Follow Feature (if implemented):
+        - Verify that you can follow/unfollow players.
+        - Check that you can access the followed players' information easily.
+
+III. Game Initialization/Resumption:
+    1. New Game:
+        - Start a new game.
+        - Verify that the game state is initialized correctly (starting money, date, etc.).
+    2. Resume Game:
+        - Play a bit, make some transactions.
+        - Log out.
+        - Log back in.
+        - Check that you have correctly resumed the game.
+        - Check that all the game's value are what they should be (stock's price, money...)
+    3. Game State Storage:
+        - Verify that the game state is saved in the database (date, stock values, player portfolios).
+
+IV. Dividends
+    1. Dividends gain:
+        - Verify that, if you posses a stock at the dividend's date, you gain money.
+    2. Date:
+        - Check that a stock as a dividend date.
+        - Check that the dividend date is saved in the database.
+
+V. Game Update
+    1. Time:
+        - Verify that the game advance of 1 month every minute.
+    2. Dividend:
+        - Verify that the dividends are correctly given to players.
+    3. Stock price:
+        - Verify that the price of the stock change correctly every month.
+
+VI. Game Loss
+    1. Loss:
+        - Verify that a player lose when his portfolio value is under 1000€.
+        - Verify that it's impossible to do anything when you lost.
+
+VII. Leaderboard
+    1. Display:
+        - Verify that the leaderboard is correctly displayed.
+    2. Correct data:
+        - Verify that the data displayed on the leaderboard is correct (player's name, and portfolio value).

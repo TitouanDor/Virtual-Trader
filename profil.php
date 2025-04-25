@@ -1,4 +1,18 @@
-<?php session_start(); ?>
+<?php
+session_start();
+if (isset($_SESSION['error'])) {
+    echo "<p>" . str_replace("\\n", "<br>", $_SESSION['error']) . "</p>";
+    unset($_SESSION['error']);
+}
+if (isset($_SESSION['success'])) {
+    echo "<p>" . str_replace("\\n", "<br>", $_SESSION['success']) . "</p>";
+    unset($_SESSION['success']);
+}
+
+    echo "<p>" . str_replace("\\n", "<br>", $_SESSION['success']) . "</p>";
+    unset($_SESSION['success']);
+}
+?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -20,22 +34,88 @@
     }
 </style>
 </head>
+
 <body>
 <div>
+    <a href="changePassword.php">Change password</a>
+</div>
     <a href="index.html">Se deconnecter</a>
     <br>
     <a href="marcher.php">marche</a>
     <br>
 </div>
+<div>
+    <form action="searchPlayerScript.php" method="post">
+        <input type="text" name="username" placeholder="username">
+        <button type="submit" value="search">search</button>
+    </form>
+</div>
+<div id="followed-players">
     <?php
-    
+    try {
+        $bdd = new PDO('mysql:host=localhost;dbname=virtual_trader;charset=utf8', 'root', '');
+        $req = $bdd->prepare("SELECT j.username FROM followers f JOIN joueur j ON f.followed_user_id = j.id WHERE f.user_id = ?");
+        $req->execute([$_SESSION['id']]);
+        $followedPlayers = $req->fetchAll();
+        if ($followedPlayers === false) {
+            echo "<p>Database error</p>";
+        }
+        if ($followedPlayers) {
+            echo "<p>Followed players:</p>";
+            foreach ($followedPlayers as $player) {
+                echo "<p><a href='playerProfil.php?id=".htmlspecialchars($player['id'])."'>" . htmlspecialchars($player['username']) . "</a></p>";
+            }
+        } else {
+            echo "<p>You don't follow anyone</p>";
+        }
+    } catch (PDOException $e) {
+        echo "<p>Database connection error</p>";
+        exit();
+    }
+    ?>
+</div>
+<div id="search-result">
+        <?php
+        if (isset($_SESSION['searchResult'])) {
+            $user = $_SESSION['searchResult'];
+            echo "<p>" . htmlspecialchars($user['username']) . "</p>";
+            echo "<form action='followScript.php' method='post'>";
+            echo "<input type='hidden' name='followed_user_id' value='" . $user['id'] . "'>";
+            echo "<button type='submit'>" . (isset($isFollowing) && $isFollowing ? "Unfollow" : "Follow") . "</button>";
+            echo "</form>";
+            unset($_SESSION['searchResult']);
+        }
+        ?>
+    </div>
+<div id="followed-players">
+    <?php
+    try {
+        $bdd = new PDO('mysql:host=localhost;dbname=virtual_trader;charset=utf8', 'root', '');
+        $req = $bdd->prepare("SELECT j.username, j.id FROM followers f JOIN joueur j ON f.followed_user_id = j.id WHERE f.user_id = ?");
+        $req->execute([$_SESSION['id']]);
+        $followedPlayers = $req->fetchAll();
+        if ($followedPlayers) {
+            echo "<p>Followed players:</p>";
+            foreach ($followedPlayers as $player) {
+                echo "<p><a href='playerProfil.php?id=".htmlspecialchars($player['id'])."'>" . htmlspecialchars($player['username']) . "</a></p>";
+            }
+        } else {
+            echo "<p>You don't follow anyone</p>";
+        }
+    } catch (PDOException $e) {
+        echo "<p>Database connection error</p>";
+        exit();
+    }
+    </div>
 
+
+    <?php
     // Check if user is logged in
     if (!isset($_SESSION['id'])) {
         header('location: index.html');
         exit();
     }
-
+    $user = null;
     try {
         // Database connection
         $bdd = new PDO('mysql:host=localhost;dbname=virtual_trader;charset=utf8', 'root', '');
@@ -51,9 +131,9 @@
     try {
         $req = $bdd->prepare("SELECT nom, prenom, email, argent FROM joueur WHERE id = ?");
         $req->execute([$userId]);
-        $user = $req->fetch();
-        if ($user == false){
-            echo "<p>Database error</p>";
+        $user = $req->fetch(); // Fetch user data
+        if ($user === false) {
+            echo "<p>Database error</p>";// Handle fetch error
         }
     } catch (PDOException $e) {
         echo "<p>Database error</p>";
@@ -76,20 +156,23 @@
         $req = $bdd->prepare("SELECT a.nom, p.quantity FROM portefeuille p JOIN actions a ON p.stock_id = a.id WHERE p.player_id = ?");
         $req->execute([$userId]);
         $portfolio = $req->fetchAll();
+        if ($portfolio === false){
+            echo "<p>Database error</p>";
+            // Handle fetch error
+        }        
     } catch (PDOException $e) {
         echo "<p>Database error</p>";
     }
-
-    if ($portfolio) {
-        echo "<ul>";
-        foreach ($portfolio as $stock) {
-            echo "<li>" . $stock['nom'] . " - Quantity: " . $stock['quantity'] . "</li>";
+        if (!empty($portfolio)) {
+            echo "<ul>";
+            foreach ($portfolio as $stock) {
+                echo "<li>" . $stock['nom'] . " - Quantity: " . $stock['quantity'] . "</li>";
+            }
+            echo "</ul>";
+        } else {
+            echo "<p>You don't have any stocks in your portfolio.</p>";
         }
-        echo "</ul>";
-    } else {
-        echo "<p>You don't have any stocks in your portfolio.</p>";
-    }
     ?>
-</div>
+
 </body>
 </html>
