@@ -1,112 +1,114 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8" />
-    <title>Détails de l'action</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f4f4f4;
-        }
-        .stock-container {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-        }
-        .history-list {
-            list-style: none;
-            padding: 0;
-        }
-        .history-list li {
-            margin-bottom: 5px;
-        }
-        .buy-sell-form label {
-            display: block;
-            margin-bottom: 5px;
-        }
-        .buy-sell-form input[type="number"] {
-            width: 100px;
-            margin-bottom: 10px;
-        }
-        .buy-sell-form button {
-            margin-right: 10px;
-        }
-    </style>
-</head>
-<body>
-
 <?php
-
 session_start();
-if(!isset($_SESSION['id'])){
+if (!isset($_SESSION['id'])) {
     header("location: index.html");
+    exit();
 }
-// Database connection
-$bdd = new PDO('mysql:host=localhost;dbname=virtual_trader;charset=utf8', 'root', '');
-
-// Check if stock ID is provided
-if (!isset($_GET['id'])) {
+// Check if stock ID, quantity and action are provided
+if (!isset($_POST['stock_id']) || !isset($_POST['quantity']) || !isset($_POST['action'])) {
+    $_SESSION['error'] = "Invalid data provided.";
     header('Location: marcher.php');
     exit();
 }
 
-$stockId = $_GET['id'];
-
-// Get stock information
-$req = $bdd->prepare("SELECT nom, description, prix FROM actions WHERE id = ?");
-$req->execute([$stockId]);
-$stock = $req->fetch();
-
-// Check if stock exists
-if (!$stock) {
-    echo "<p>Action non trouvée.</p>";
-    exit();
-}
-
-// Get price history
-$historyReq = $bdd->prepare("SELECT real_date, price FROM historique WHERE stock_id = ? ORDER BY real_date DESC");
-$historyReq->execute([$stockId]);
-$history = $historyReq->fetchAll();
-
+$stockId = $_POST['stock_id'];
+$quantity = $_POST['quantity'];
+$action = $_POST['action'];
 $player_id = $_SESSION['id'];
-// Get player information
-$playerReq = $bdd->prepare("SELECT argent FROM joueur WHERE id = ?");
-$playerReq->execute([$player_id]);
-$player = $playerReq->fetch();
+
+try {
+    // Database connection
+    $bdd = new PDO('mysql:host=localhost;dbname=virtual_trader;charset=utf8', 'root', '');
+    $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    // Get stock information
+    $req = $bdd->prepare("SELECT nom, prix FROM actions WHERE id = ?");
+    $req->execute([$stockId]);
+    $stock = $req->fetch();
+
+    if (!$stock) {
+        $_SESSION['error'] = "Stock not found.";
+        header("Location: marcher.php");
+        exit();
+    }
+
+    // Get player information
+    $playerReq = $bdd->prepare("SELECT argent FROM joueur WHERE id = ?");
+    $playerReq->execute([$player_id]);
+    $player = $playerReq->fetch();
+
+    if (!$player) {
+        $_SESSION['error'] = "Player not found.";
+        header("Location: marcher.php");
+        exit();
+    }
+
+    $stockPrice = $stock['prix'];
+    $playerMoney = $player['argent'];
+
+    if ($action == 'buy') {
+        $totalCost = $stockPrice * $quantity;
+        if ($playerMoney < $totalCost) {
+            $_SESSION['error'] = "Insufficient funds to buy this stock.";
+            header("Location: pageAction.php?id=" . $stockId);
+            exit();
+        }
+
+        // Insert the purchase in the 'portefeuille' table or update it if it already exists
+        $portfolioCheckReq = $bdd->prepare("SELECT quantity FROM portefeuille WHERE player_id = ? AND stock_id = ?");
+        $portfolioCheckReq->execute([$player_id, $stockId]);
+        $existingPortfolio = $portfolioCheckReq->fetch();
+        if($existingPortfolio){
+          $newQuantity = $existingPortfolio['quantity'] + $quantity;
+          $updatePortfolioReq = $bdd->prepare("UPDATE portefeuille SET quantity = ? WHERE player_id = ? AND stock_id = ?");
+          $updatePortfolioReq->execute([$newQuantity, $player_id, $stockId]);
+        }else{
+          $insertPortfolioReq = $bdd->prepare("INSERT INTO portefeuille (player_id, stock_id, quantity, purchase_price, purchase_date) VALUES (?, ?, ?, ?, NOW())");
+          $insertPortfolioReq->execute([$player_id, $stockId, $quantity, $stockPrice]);
+        }
+
+        // Update the player's money
+        $newMoney = $playerMoney - $totalCost;
+        $updatePlayerReq = $bdd->prepare("UPDATE joueur SET argent = ? WHERE id = ?");
+        $updatePlayerReq->execute([$newMoney, $player_id]);
+
+        // Insert the transaction in the 'historique' table
+        $insertHistoryReq = $bdd->prepare("INSERT INTO historique (stock_id, player_id, price, nature, real_date) VALUES (?, ?, ?, 'buy', NOW())");
+        $insertHistoryReq->execute([$stockId, $player_id, $stockPrice]);
+    } elseif ($action == 'sell') {
+        // Get the number of stocks the user possesses
+        $portfolioReq = $bdd->prepare("SELECT quantity FROM portefeuille WHERE player_id = ? AND stock_id = ?");
+        $portfolioReq->execute([$player_id, $stockId]);
+        $portfolio = $portfolioReq->fetch();
+
+        if (!$portfolio || $portfolio['quantity'] < $quantity) {
+            $_SESSION['error'] = "Insufficient stocks to sell.";
+            header("Location: pageAction.php?id=" . $stockId);
+            exit();
+        }
+
+        // Update the number of stocks or delete it from portefeuille table
+        $newQuantity = $portfolio['quantity'] - $quantity;
+        if ($newQuantity == 0) {
+            $deletePortfolioReq = $bdd->prepare("DELETE FROM portefeuille WHERE player_id = ? AND stock_id = ?");
+            $deletePortfolioReq->execute([$player_id, $stockId]);
+        } else {
+            $updatePortfolioReq = $bdd->prepare("UPDATE portefeuille SET quantity = ? WHERE player_id = ? AND stock_id = ?");
+            $updatePortfolioReq->execute([$newQuantity, $player_id, $stockId]);
+        }
+
+        // Update the player's money
+        $newMoney = $playerMoney + ($stockPrice * $quantity);
+        $updatePlayerReq = $bdd->prepare("UPDATE joueur SET argent = ? WHERE id = ?");
+        $updatePlayerReq->execute([$newMoney, $player_id]);
+
+        // Insert the transaction in the 'historique' table
+        $insertHistoryReq = $bdd->prepare("INSERT INTO historique (stock_id, player_id, price, nature, real_date) VALUES (?, ?, ?, 'sell', NOW())");
+        $insertHistoryReq->execute([$stockId, $player_id, $stockPrice]);
+    }
+    header("Location: pageAction.php?id=" . $stockId);
+} catch (PDOException $e) {
+    $_SESSION['error'] = "Database error.";
+    header("Location: pageAction.php?id=" . $stockId);
+}
 ?>
-    <div class="stock-container">
-        <h1><?php echo htmlspecialchars($stock['nom']); ?></h1>
-        <p><strong>Description:</strong> <?php echo htmlspecialchars($stock['description']); ?></p>
-        <p><strong>Prix:</strong> <?php echo htmlspecialchars($stock['prix']); ?> €</p>
-
-        <h2>Historique des prix</h2>
-        <?php if ($history): ?>
-            <ul class="history-list">
-                <?php foreach ($history as $record): ?>
-                    <li><?php echo htmlspecialchars($record['real_date']); ?>: <?php echo htmlspecialchars($record['price']); ?> €</li>
-                <?php endforeach; ?>
-            </ul>
-        <?php else: ?>
-            <p>Aucun historique disponible pour cette action.</p>
-        <?php endif; ?>
-    </div>
-
-    <div class="stock-container">
-        <h2>Acheter / Vendre</h2>
-        <p>Votre argent: <?php echo htmlspecialchars($player['argent']); ?> €</p>
-        <form class="buy-sell-form" action="buySellScript.php" method="post">
-            <input type="hidden" name="stock_id" value="<?php echo $stockId; ?>">
-            <label for="quantity">Quantité:</label>
-            <input type="number" id="quantity" name="quantity" value="0" min="0" required>
-            <br>
-            <button type="submit" name="action" value="buy">Acheter</button>
-            <button type="submit" name="action" value="sell">Vendre</button>
-        </form>
-    </div>
-
-
-</body>
-</html>

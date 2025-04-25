@@ -1,9 +1,15 @@
 <?php
     session_start();
     if($_SESSION['valid'] == 1) {
-        echo ('Email deja utilise');
+        echo ('Email deja utilise<br>');
+        unset($_SESSION['valid']);
+    }
+    if(isset($_SESSION['error'])){
+        echo($_SESSION['error'] . "<br>");
+        unset($_SESSION['error']);
     }
 ?>
+
 
 <html lang="fr">
 <head>

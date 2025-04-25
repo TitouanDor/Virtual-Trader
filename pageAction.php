@@ -45,13 +45,26 @@ if(!isset($_SESSION['id'])){
     header("location: index.html");
 }
 // Database connection
-$bdd = new PDO('mysql:host=localhost;dbname=virtual_trader;charset=utf8', 'root', '');
+try {
+    $bdd = new PDO('mysql:host=localhost;dbname=virtual_trader;charset=utf8', 'root', '');
+    $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    echo "<p>Database connection error</p>";
+    exit();
+}
 
 // Check if stock ID is provided
 if (!isset($_GET['id'])) {
     header('Location: marcher.php');
     exit();
 }
+?>
+<a href="index.html">Se deconnecter</a>
+<a href="marcher.php">marche</a>
+<?php
+
+
+
 
 $stockId = $_GET['id'];
 
@@ -62,7 +75,8 @@ $stock = $req->fetch();
 
 // Check if stock exists
 if (!$stock) {
-    echo "<p>Action non trouvée.</p>";
+    echo "<p>Action non trouvée</p>";
+    header('Location: marcher.php');
     exit();
 }
 
@@ -70,13 +84,25 @@ if (!$stock) {
 $historyReq = $bdd->prepare("SELECT real_date, price FROM historique WHERE stock_id = ? ORDER BY real_date DESC");
 $historyReq->execute([$stockId]);
 $history = $historyReq->fetchAll();
+if ($history === false) {
+    echo "<p>Database error</p>";
+    exit();
+}
 
 $player_id = $_SESSION['id'];
 // Get player information
 $playerReq = $bdd->prepare("SELECT argent FROM joueur WHERE id = ?");
-$playerReq->execute([$player_id]);
+$playerReq->execute([htmlspecialchars($player_id)]);
 $player = $playerReq->fetch();
+if ($player === false) {
+    echo "<p>Database error</p>";
+    exit();
+}
 ?>
+
+
+
+
     <div class="stock-container">
         <h1><?php echo htmlspecialchars($stock['nom']); ?></h1>
         <p><strong>Description:</strong> <?php echo htmlspecialchars($stock['description']); ?></p>
@@ -106,6 +132,8 @@ $player = $playerReq->fetch();
             <button type="submit" name="action" value="sell">Vendre</button>
         </form>
     </div>
+    
+
 
 
 </body>
