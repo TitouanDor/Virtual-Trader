@@ -73,14 +73,14 @@ if ($currentTime->diff($lastUpdate)->i >= 1) {
     }
     $players = $dividendReq->fetchAll();
     foreach($players as $player){
-        $new_money = $player['argent'] + $player['dividende'];
+        $new_money = floatval($player['argent']) + floatval($player['dividende']);
         $updateMoney = $bdd->prepare("UPDATE joueur SET argent = ? WHERE id = ?");
         if (!$updateMoney->execute([$new_money, $player['id']])) {
             $_SESSION['error'] = "Database error\n";
             header('location: index.html');
             exit();
         }
-    }
+        }
     //update the price of stocks
     $stocksReq = $bdd->prepare("SELECT id, prix FROM actions");
     if (!$stocksReq->execute()) {
@@ -110,16 +110,18 @@ if ($currentTime->diff($lastUpdate)->i >= 1) {
                 header('location: index.html');
                 exit();
             }
-            $lastPrice = $lastPriceReq->fetch();
-            $percent = $lastPrice['valeur_action'] == 0 ? 0 : (($stock['prix'] - $lastPrice['valeur_action']) / $lastPrice['valeur_action']) * 100;
+            $lastPrice = $lastPriceReq->fetch();          
+            if ($lastPrice === false){
+                $percent = 0;
+            } else {$percent = $lastPrice['valeur_action'] == 0 ? 0 : ((floatval($stock['prix']) - floatval($lastPrice['valeur_action'])) / floatval($lastPrice['valeur_action'])) * 100;}
             $percent += rand(-3, 3);
         if($percent > 10){
             $percent = 10;
         }
         if($percent < -10){
             $percent = -10;
-        }
-        $newPrice = $stock['prix'] + ($stock['prix'] * ($percent/100));
+            }
+            $newPrice = floatval($stock['prix']) + (floatval($stock['prix']) * ($percent/100));
         }
         if($newPrice < 1){
             $newPrice = 1;
