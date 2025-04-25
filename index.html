@@ -110,10 +110,12 @@ if ($currentTime->diff($lastUpdate)->i >= 1) {
                 header('location: index.html');
                 exit();
             }
-            $lastPrice = $lastPriceReq->fetch();          
+            $lastPrice = $lastPriceReq->fetch();
+            $percent = 0;
             if ($lastPrice === false){
                 $percent = 0;
-            } else {$percent = $lastPrice['valeur_action'] == 0 ? 0 : ((floatval($stock['prix']) - floatval($lastPrice['valeur_action'])) / floatval($lastPrice['valeur_action'])) * 100;}
+            } else {
+                $percent = $lastPrice['valeur_action'] == 0 ? 0 : ((floatval($stock['prix']) - floatval($lastPrice['valeur_action'])) / floatval($lastPrice['valeur_action'])) * 100;}
             $percent += rand(-3, 3);
         if($percent > 10){
             $percent = 10;
