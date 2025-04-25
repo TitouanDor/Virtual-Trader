@@ -42,7 +42,7 @@
 
 session_start();
 if(!isset($_SESSION['id'])){
-    header("location: index.html");
+    header("location: index.php");
 }
 // Database connection
 try {
@@ -59,7 +59,7 @@ if (!isset($_GET['id'])) {
     exit();
 }
 ?>
-<a href="index.html">Se deconnecter</a>
+<a href="index.php">Se deconnecter</a>
 <a href="marcher.php">marche</a>
 <?php
 

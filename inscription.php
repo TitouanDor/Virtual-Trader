@@ -19,7 +19,7 @@
 </head>
 <body>
 <div>
-    <a href="index.html">
+    <a href="index.php">
     <button>
         Retour
     </button>

@@ -4,7 +4,7 @@ session_start();
 
 // Check if email and password are set in the POST request
 if (!isset($_POST['e-mail']) || !isset($_POST['mdp'])) {
-    header('location: index.html');
+    header('location: index.php');
     exit(); 
 }
 
@@ -21,7 +21,7 @@ try {
     $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
     $_SESSION['error'] = "Database connection error<br>" . htmlspecialchars($e->getMessage());
-    header('location: index.html');
+    header('location: index.php');
     exit();
 }
 
@@ -31,7 +31,7 @@ $req->execute([$email]);
 $data = $req->fetch();
 if($data === false){
     $_SESSION['error'] = "An error occurred while checking for the user.";
-    header('location: index.html');
+    header('location: index.php');
     exit();
 }
 // Check if the user exists
@@ -42,10 +42,10 @@ if ($data) {
         exit();
     } else {
         $_SESSION['error'] = "Incorrect email or password";
-        header('location: index.html');
+        header('location: index.php');
         exit();
     }
 }
  $_SESSION['error'] = "Incorrect email or password";
-header('location: index.html');
+header('location: index.php');
 ?>

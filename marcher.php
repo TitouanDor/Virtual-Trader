@@ -6,7 +6,7 @@
 </head>
 <body>
 <div>
-    <a href="index.html">Se deconnecter</a>
+    <a href="index.php">Se deconnecter</a>
     <a href="profil.php">Profil</a>
 </div>
 <?php

@@ -39,7 +39,7 @@ if (isset($_SESSION['success'])) {
 <div>
     <a href="changePassword.php">Change password</a>
 </div>
-    <a href="index.html">Se deconnecter</a>
+    <a href="index.php">Se deconnecter</a>
     <br>
     <a href="marcher.php">marche</a>
     <br>
@@ -112,7 +112,7 @@ if (isset($_SESSION['success'])) {
     <?php
     // Check if user is logged in
     if (!isset($_SESSION['id'])) {
-        header('location: index.html');
+        header('location: index.php');
         exit();
     }
     $user = null;

@@ -1,7 +1,7 @@
 <?php
 session_start();
 if (!isset($_SESSION['id'])) {
-    header("location: index.html");
+    header("location: index.php");
     exit();
 }
 $player_id = $_SESSION['id'];
@@ -53,7 +53,7 @@ try {
     if ($portfolioValue < 1000) {
         $_SESSION['lost'] = true;
         $_SESSION['error'] = "You have lost the game because your portfolio value is under 1000€.";
-        header("Location: index.html");
+        header("Location: index.php");
         exit();
     }
         $_SESSION['error'] = "Player not found.";

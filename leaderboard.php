@@ -3,7 +3,7 @@ php
 session_start();
 
 if (!isset($_SESSION['id'])) {
-    header('location: index.html');
+    header('location: index.php');
     exit();
 }
 
@@ -12,7 +12,7 @@ try {
 } catch (PDOException $e) {
     session_start();
     $_SESSION['error'] = "Database connection error: \n" . $e->getMessage();
-    header('location: index.html');
+    header('location: index.php');
     exit();
 }
 
@@ -28,7 +28,7 @@ try {
 } catch (PDOException $e) {
     session_start();
     $_SESSION['error'] = "Database error: \n" . $e->getMessage();
-    header('location: index.html');
+    header('location: index.php');
     exit();
 }
 ?>
@@ -41,7 +41,7 @@ try {
 </head>
 <body>
 
-<a href="index.html">Back to index</a>
+<a href="index.php">Back to index</a>
 
 <h1>Leaderboard</h1>
 
