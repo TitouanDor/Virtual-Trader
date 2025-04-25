@@ -8,6 +8,7 @@ $dbPass = ''; // Replace with your database password
 
 // New database connection
 $bdd = new PDO("mysql:host=$dbHost;dbname=$dbName;charset=utf8", $dbUser, $dbPass);
+$bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 //Prepare the base request for the price
 $reqBasePrice = $bdd->prepare("SELECT prix FROM actions WHERE id = ?");

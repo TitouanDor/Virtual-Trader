@@ -74,7 +74,7 @@ try {
     }
 
     $_SESSION['success'] = "You are now registered!";
-    header('Location: index.php');
+    header('Location: index.php');//
     exit();
 } catch (PDOException $e) {
     $_SESSION['error'] = "Erreur lors de l'insertion du joueur : " . $e->getMessage();

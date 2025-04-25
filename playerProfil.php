@@ -8,7 +8,6 @@ if (!isset($_SESSION['id'])) {
 }
 
 if (!isset($_GET['player_id'])) {
-    session_start();
     $_SESSION['error'] = "Invalid player ID";
     header('location: profil.php');
     exit();
@@ -20,14 +19,12 @@ try {
     $bdd = new PDO('mysql:host=localhost;dbname=virtual_trader;charset=utf8', 'root', '');
     $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
-    session_start();
     $_SESSION['error'] = "Database connection error: " . $e->getMessage();
-    header('location: profil.php');
+    header('location: index.php');
     exit();
 }
 
 try {
-    $req = $bdd->prepare("SELECT nom, prenom, username FROM joueur WHERE id = ?");
     $req->execute([$player_id]);
     $player = $req->fetch();
 
@@ -44,7 +41,7 @@ try {
 
 } catch (PDOException $e) {
     session_start();
-    $_SESSION['error'] = "Database error: " . $e->getMessage();
+    $_SESSION['error'] = "Database error: " . $e->getMessage();   
     header('location: profil.php');
     exit();
 }

@@ -8,7 +8,6 @@ if (isset($_SESSION['success'])) {
     echo "<p>" . str_replace("\\n", "<br>", $_SESSION['success']) . "</p>";
     unset($_SESSION['success']);
 }
-
     echo "<p>" . str_replace("\\n", "<br>", $_SESSION['success']) . "</p>";
     unset($_SESSION['success']);
 }
@@ -41,7 +40,6 @@ if (isset($_SESSION['success'])) {
 </div>
     <a href="index.php">Se deconnecter</a>
     <br>
-    <a href="marcher.php">marche</a>
     <br>
 </div>
 <div>
@@ -114,6 +112,7 @@ if (isset($_SESSION['success'])) {
     if (!isset($_SESSION['id'])) {
         header('location: index.php');
         exit();
+
     }
     $user = null;
     try {
@@ -131,6 +130,7 @@ if (isset($_SESSION['success'])) {
     try {
         $req = $bdd->prepare("SELECT nom, prenom, email, argent FROM joueur WHERE id = ?");
         $req->execute([$userId]);
+
         $user = $req->fetch(); // Fetch user data
         if ($user === false) {
             echo "<p>Database error</p>";// Handle fetch error
@@ -141,6 +141,7 @@ if (isset($_SESSION['success'])) {
     ?>
 
     <?php
+    echo "<a href='marcher.php'>marche</a>";
     if (isset($user)) {
         ?>
         <div class="profile-info">
@@ -158,7 +159,7 @@ if (isset($_SESSION['success'])) {
         $portfolio = $req->fetchAll();
         if ($portfolio === false){
             echo "<p>Database error</p>";
-            // Handle fetch error
+        
         }        
     } catch (PDOException $e) {
         echo "<p>Database error</p>";

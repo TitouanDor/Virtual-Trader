@@ -20,7 +20,7 @@ $userId = $_SESSION['id'];
 
 try {
     $bdd = new PDO('mysql:host=localhost;dbname=virtual_trader;charset=utf8', 'root', '');
-    $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);    
 } catch (PDOException $e) {
     $_SESSION['error'] = "Database connection error";
     header("location: changePassword.php");

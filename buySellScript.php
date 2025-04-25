@@ -53,7 +53,7 @@ try {
     if ($portfolioValue < 1000) {
         $_SESSION['lost'] = true;
         $_SESSION['error'] = "You have lost the game because your portfolio value is under 1000€.";
-        header("Location: index.php");
+        header("Location: index.php");// Check if stock ID, quantity and action are provided
         exit();
     }
         $_SESSION['error'] = "Player not found.";
