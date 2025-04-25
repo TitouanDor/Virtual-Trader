@@ -89,16 +89,30 @@ if ($currentTime->diff($lastUpdate)->i >= 1) {
         exit();
     }
     $stocks = $stocksReq->fetchAll();
-    foreach($stocks as $stock){
-        $lastPriceReq = $bdd->prepare("SELECT valeur_action FROM cours_marche WHERE stock_id = ? AND game_month = ? AND game_year = ?");
-        if (!$lastPriceReq->execute([$stock['id'], $currentMonth == 1 ? 12 : $currentMonth - 1, $currentMonth == 1 ? $currentYear - 1 : $currentYear])) {
+    foreach ($stocks as $stock) {
+        $lastMonth = $currentMonth == 1 ? 12 : $currentMonth - 1;
+        $lastYear = $currentMonth == 1 ? $currentYear - 1 : $currentYear;
+
+        //check if we have the last price
+        $lastPriceExistReq = $bdd->prepare("SELECT COUNT(*) AS count FROM cours_marche WHERE stock_id = ? AND game_month = ? AND game_year = ?");
+        if (!$lastPriceExistReq->execute([$stock['id'], $lastMonth, $lastYear])) {
             $_SESSION['error'] = "Database error\n";
             header('location: index.html');
             exit();
         }
-        $lastPrice = $lastPriceReq->fetch();
-        $percent = $lastPrice['valeur_action'] == 0 ? 0 : (($stock['prix'] - $lastPrice['valeur_action']) / $lastPrice['valeur_action']) * 100;
-        $percent += rand(-3,3);
+        $lastPriceExist = $lastPriceExistReq->fetch();
+        if ($lastPriceExist['count'] == 0) {
+            $percent = 0;
+        } else {
+            $lastPriceReq = $bdd->prepare("SELECT valeur_action FROM cours_marche WHERE stock_id = ? AND game_month = ? AND game_year = ?");
+            if (!$lastPriceReq->execute([$stock['id'], $lastMonth, $lastYear])) {
+                $_SESSION['error'] = "Database error\n";
+                header('location: index.html');
+                exit();
+            }
+            $lastPrice = $lastPriceReq->fetch();
+            $percent = $lastPrice['valeur_action'] == 0 ? 0 : (($stock['prix'] - $lastPrice['valeur_action']) / $lastPrice['valeur_action']) * 100;
+            $percent += rand(-3, 3);
         if($percent > 10){
             $percent = 10;
         }
@@ -106,6 +120,7 @@ if ($currentTime->diff($lastUpdate)->i >= 1) {
             $percent = -10;
         }
         $newPrice = $stock['prix'] + ($stock['prix'] * ($percent/100));
+        }
         if($newPrice < 1){
             $newPrice = 1;
         }
