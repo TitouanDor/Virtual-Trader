@@ -1,4 +1,4 @@
--- Création de la base de données
+ -- Création de la base de données
 CREATE DATABASE IF NOT EXISTS virtual_trader;
 
 -- Table des utilisateurs/joueurs
@@ -33,6 +33,15 @@ CREATE TABLE IF NOT EXISTS portefeuille (
     FOREIGN KEY (player_id) REFERENCES joueur(id) ON DELETE CASCADE,
     FOREIGN KEY (stock_id) REFERENCES actions(id) ON DELETE CASCADE
 
+);
+
+-- Table des abonnements/suivis (followers)
+CREATE TABLE IF NOT EXISTS followers (
+    follower_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    followed_user_id INT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES joueur(id) ON DELETE CASCADE,
+    FOREIGN KEY (followed_user_id) REFERENCES joueur(id) ON DELETE CASCADE
 );
 
 -- Table de l'historique des prix

@@ -1,28 +1,37 @@
 <?php
 
-if (!isset($_POST['e-mail'])){
+// Check if email and password are set in the POST request
+if (!isset($_POST['e-mail']) || !isset($_POST['mdp'])) {
     header('location: index.html');
+    exit(); 
 }
 
-if (!isset($_POST['mdp'])){
-    header('location: index.html');
-}
 $email = $_POST['e-mail'];
-$password = PASSWORD_HASH($_POST['mdp'], PASSWORD_DEFAULT);
+$password = $_POST['mdp'];
 
-//faire la requete
+// Database connection with username and password
+try {
+    $dbHost = 'localhost'; // Replace with your database host
+    $dbName = 'virtual_trader'; // Replace with your database name
+    $dbUser = 'your_db_user'; // Replace with your database user
+    $dbPass = 'your_db_password'; // Replace with your database password
+    $bdd = new PDO("mysql:host=$dbHost;dbname=$dbName;charset=utf8", $dbUser, $dbPass);
+    $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    die('Erreur de connexion à la base de données : ' . $e->getMessage());
+}
 
-$bdd = new PDO('mysql:host=localhost;dbname=virtual_trader;charset=utf8', 'root', '');
+// Fetch user data based on email
 $req = $bdd->prepare("SELECT * FROM joueur WHERE email = ?");
 $req->execute([$email]);
 $data = $req->fetch();
 
-if($$password==$data['password']){
+// Check if user exists and password is correct
+if ($data && password_verify($password, $data['mdp'])) {
     session_start();
     $_SESSION['id'] = $data['id'];
     header('location: profil.php');
-}
-else{
-    header('location: inscription.php');
+} else {
+    header('location: index.html');
 }
 ?>

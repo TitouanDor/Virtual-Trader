@@ -1,0 +1,13 @@
+-   **Sécurité de la base de données** : Modifier la connexion a la base de données, il ne faut plus utiliser l'utilisateur root sans mot de passe.
+-   **Création de la table followers**: Ajouter la table `followers` dans le fichier `database-schema.sql` pour implémenter le suivi des joueurs.
+-   **Correction de la connexion** : Corriger le fichier `connectionScript.php` pour permettre à un utilisateur de se connecter correctement en utilisant `password_verify`.
+-   **Correction de l'inscription**: Corriger le fichier `inscriptionScript.php` pour que les nouveaux joueurs commencent avec 10 000€ au lieu de 1 000€.
+-   **Implémentation du temps** : Implémenter le fichier `actionDuTemps.php` pour faire progresser le temps (mois et années) dans le jeu.
+-   **Implémentation des actions** : Implémenter le fichier `pageAction.php` pour afficher les détails d'une action, son historique de prix, et permettre l'achat/vente.
+-   **Implémentation du profil** : Implémenter le fichier `profil.php` pour afficher les informations du joueur et son portefeuille.
+-   **Documentation du projet** : Ajouter une description du projet, des instructions d'installation, et d'utilisation dans le fichier `README.md`.
+-   **Test unitaire et d'intégration**: Effectuer des tests pour chaque module et pour l'intégration de tous les modules.
+-   **Test unitaire**: Effectuer des tests unitaires pour chaque fonctionnalité pour s'assurer de la fiabilité du code.
+- **Test d'intégration**: Effectuer des tests d'intégration pour s'assurer que les différents modules fonctionnent ensemble.
+-   **Déploiement de l'application**: Déployer l'application sur un serveur web accessible au public.
+-   **Déploiement**: Déployer l'application sur un serveur web.
