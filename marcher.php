@@ -7,7 +7,7 @@
 <body>
 <?php
 // Connect to the database and execute the request
-$bdd = new PDO('mysql:host=localhost;dbname=virtual_trader;charset=utf8', 'user', 'password');
+$bdd = new PDO('mysql:host=localhost;dbname=virtual_trader;charset=utf8', 'root', '');
 $req = $bdd->prepare("SELECT nom, description, prix FROM actions;");
 $req->execute();
 
