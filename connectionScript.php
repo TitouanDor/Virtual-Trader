@@ -12,9 +12,9 @@ $password = $_POST['mdp'];
 // Database connection with username and password
 try {
     $dbHost = 'localhost'; // Replace with your database host
-    $dbName = 'virtual_trader'; // Replace with your database name
-    $dbUser = 'your_db_user'; // Replace with your database user
-    $dbPass = 'your_db_password'; // Replace with your database password
+    $dbName = 'virtual_trader'; 
+    $dbUser = 'root'; 
+    $dbPass = ''; 
     $bdd = new PDO("mysql:host=$dbHost;dbname=$dbName;charset=utf8", $dbUser, $dbPass);
     $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
