@@ -3,8 +3,8 @@
 // Database credentials - Replace with your actual credentials
 $dbHost = 'localhost';
 $dbName = 'virtual_trader';
-$dbUser = 'user'; // Replace with your database username
-$dbPass = 'password'; // Replace with your database password
+$dbUser = 'root'; // Replace with your database username
+$dbPass = ''; // Replace with your database password
 
 // New database connection
 $bdd = new PDO("mysql:host=$dbHost;dbname=$dbName;charset=utf8", $dbUser, $dbPass);
