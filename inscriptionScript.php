@@ -1,11 +1,10 @@
 <?php
-
-$dbHost = "localhost";
-$dbName = "virtual_trader";
-$dbUser = "your_db_user"; // Replace with your database username
-$dbPass = "your_db_password"; // Replace with your database password
-
-$bdd = new PDO("mysql:host=$dbHost;dbname=$dbName;charset=utf8", $dbUser, $dbPass);
+try {
+    $bdd = new PDO('mysql:host=localhost;dbname=virtual_trader;charset=utf8', 'user', 'password');
+} catch (PDOException $e) {
+    echo "Erreur de connexion à la base de données : " . $e->getMessage();
+    exit();
+}
 $nom = $_POST['nom'];
 $prenom = $_POST['prenom'];
 $email = $_POST['e-mail'];

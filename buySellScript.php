@@ -1,107 +1,112 @@
-php
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <title>Détails de l'action</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        .stock-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .history-list {
+            list-style: none;
+            padding: 0;
+        }
+        .history-list li {
+            margin-bottom: 5px;
+        }
+        .buy-sell-form label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .buy-sell-form input[type="number"] {
+            width: 100px;
+            margin-bottom: 10px;
+        }
+        .buy-sell-form button {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+
 <?php
+
 session_start();
-
-// Check if user is logged in
-if (!isset($_SESSION['id'])) {
-    header('location: index.html');
-    exit();
+if(!isset($_SESSION['id'])){
+    header("location: index.html");
 }
-
-// Check if required POST parameters are set
-if (!isset($_POST['stockId']) || !isset($_POST['quantity']) || !isset($_POST['action'])) {
-    header('location: marcher.php');
-    exit();
-}
-
-// Get data from POST request
-$stockId = $_POST['stockId'];
-$quantity = $_POST['quantity'];
-$action = $_POST['action'];
-$userId = $_SESSION['id'];
-
 // Database connection
-$bdd = new PDO('mysql:host=localhost;dbname=virtual_trader;charset=utf8', 'root', '');
+$bdd = new PDO('mysql:host=localhost;dbname=virtual_trader;charset=utf8', 'user', 'password');
 
-// Get stock price
-$req = $bdd->prepare("SELECT prix FROM actions WHERE id = ?");
+// Check if stock ID is provided
+if (!isset($_GET['id'])) {
+    header('Location: marcher.php');
+    exit();
+}
+
+$stockId = $_GET['id'];
+
+// Get stock information
+$req = $bdd->prepare("SELECT nom, description, prix FROM actions WHERE id = ?");
 $req->execute([$stockId]);
-$stockPrice = $req->fetchColumn();
+$stock = $req->fetch();
 
-// Get user cash
-$req = $bdd->prepare("SELECT argent FROM joueur WHERE id = ?");
-$req->execute([$userId]);
-$userCash = $req->fetchColumn();
-
-// Get user current quantity of the stock
-$req = $bdd->prepare("SELECT quantity FROM portefeuille WHERE player_id = ? AND stock_id = ?");
-$req->execute([$userId, $stockId]);
-$userStockQuantity = $req->fetchColumn();
-if ($userStockQuantity === false) {
-    $userStockQuantity = 0;
+// Check if stock exists
+if (!$stock) {
+    echo "<p>Action non trouvée.</p>";
+    exit();
 }
 
-$totalPrice = $stockPrice * $quantity;
+// Get price history
+$historyReq = $bdd->prepare("SELECT real_date, price FROM historique WHERE stock_id = ? ORDER BY real_date DESC");
+$historyReq->execute([$stockId]);
+$history = $historyReq->fetchAll();
 
-// Handle buy action
-if ($action == 'buy') {
-    if ($userCash < $totalPrice) {
-        header('location: pageAction.php?id=' . $stockId . '&error=notEnoughMoney');
-        exit();
-    }
-
-    // Update user cash
-    $newCash = $userCash - $totalPrice;
-    $req = $bdd->prepare("UPDATE joueur SET argent = ? WHERE id = ?");
-    $req->execute([$newCash, $userId]);
-
-    // Check if the stock is in the portfolio
-    if ($userStockQuantity > 0) {
-        // Update portfolio
-        $newQuantity = $userStockQuantity + $quantity;
-        $req = $bdd->prepare("UPDATE portefeuille SET quantity = ? WHERE player_id = ? AND stock_id = ?");
-        $req->execute([$newQuantity, $userId, $stockId]);
-
-    } else {
-        // Add stock to portfolio
-        $req = $bdd->prepare("INSERT INTO portefeuille (player_id, stock_id, quantity, purchase_price) VALUES (?, ?, ?, ?)");
-        $req->execute([$userId, $stockId, $quantity, $stockPrice]);
-    }
-    // Add transaction to history
-    $req = $bdd->prepare("INSERT INTO historique (stock_id, player_id, price, nature, game_month, game_year) VALUES (?, ?, ?, 'buy', (SELECT current_month FROM game_state WHERE id=1),(SELECT current_year FROM game_state WHERE id=1))");
-    $req->execute([$stockId, $userId, $totalPrice]);
-}
-
-// Handle sell action
-if ($action == 'sell') {
-    if ($userStockQuantity < $quantity) {
-        header('location: pageAction.php?id=' . $stockId . '&error=notEnoughStocks');
-        exit();
-    }
-
-    // Update user cash
-    $newCash = $userCash + $totalPrice;
-    $req = $bdd->prepare("UPDATE joueur SET argent = ? WHERE id = ?");
-    $req->execute([$newCash, $userId]);
-
-    // Update portfolio
-    $newQuantity = $userStockQuantity - $quantity;
-
-    if ($newQuantity == 0) {
-        // Delete stock from portfolio
-        $req = $bdd->prepare("DELETE FROM portefeuille WHERE player_id = ? AND stock_id = ?");
-        $req->execute([$userId, $stockId]);
-    } else {
-        $req = $bdd->prepare("UPDATE portefeuille SET quantity = ? WHERE player_id = ? AND stock_id = ?");
-        $req->execute([$newQuantity, $userId, $stockId]);
-    }
-
-        // Add transaction to history
-        $req = $bdd->prepare("INSERT INTO historique (stock_id, player_id, price, nature, game_month, game_year) VALUES (?, ?, ?, 'sell', (SELECT current_month FROM game_state WHERE id=1),(SELECT current_year FROM game_state WHERE id=1))");
-        $req->execute([$stockId, $userId, $totalPrice]);
-}
-
-// Redirect to pageAction.php
-header('location: pageAction.php?id=' . $stockId);
-exit();
+$player_id = $_SESSION['id'];
+// Get player information
+$playerReq = $bdd->prepare("SELECT argent FROM joueur WHERE id = ?");
+$playerReq->execute([$player_id]);
+$player = $playerReq->fetch();
 ?>
+    <div class="stock-container">
+        <h1><?php echo htmlspecialchars($stock['nom']); ?></h1>
+        <p><strong>Description:</strong> <?php echo htmlspecialchars($stock['description']); ?></p>
+        <p><strong>Prix:</strong> <?php echo htmlspecialchars($stock['prix']); ?> €</p>
+
+        <h2>Historique des prix</h2>
+        <?php if ($history): ?>
+            <ul class="history-list">
+                <?php foreach ($history as $record): ?>
+                    <li><?php echo htmlspecialchars($record['real_date']); ?>: <?php echo htmlspecialchars($record['price']); ?> €</li>
+                <?php endforeach; ?>
+            </ul>
+        <?php else: ?>
+            <p>Aucun historique disponible pour cette action.</p>
+        <?php endif; ?>
+    </div>
+
+    <div class="stock-container">
+        <h2>Acheter / Vendre</h2>
+        <p>Votre argent: <?php echo htmlspecialchars($player['argent']); ?> €</p>
+        <form class="buy-sell-form" action="buySellScript.php" method="post">
+            <input type="hidden" name="stock_id" value="<?php echo $stockId; ?>">
+            <label for="quantity">Quantité:</label>
+            <input type="number" id="quantity" name="quantity" value="0" min="0" required>
+            <br>
+            <button type="submit" name="action" value="buy">Acheter</button>
+            <button type="submit" name="action" value="sell">Vendre</button>
+        </form>
+    </div>
+
+
+</body>
+</html>

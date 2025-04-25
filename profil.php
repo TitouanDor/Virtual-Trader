@@ -30,7 +30,7 @@ if (!isset($_SESSION['id'])) {
 }
 
 // Database connection
-$bdd = new PDO('mysql:host=localhost;dbname=virtual_trader;charset=utf8', 'root', '');
+$bdd = new PDO('mysql:host=localhost;dbname=virtual_trader;charset=utf8', 'user', 'password');
 
 // Get user ID from session
 $userId = $_SESSION['id'];

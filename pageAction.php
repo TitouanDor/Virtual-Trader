@@ -45,7 +45,7 @@ if(!isset($_SESSION['id'])){
     header("location: index.html");
 }
 // Database connection
-$bdd = new PDO('mysql:host=localhost;dbname=virtual_trader;charset=utf8', 'root', '');
+$bdd = new PDO('mysql:host=localhost;dbname=virtual_trader;charset=utf8', 'user', 'password');
 
 // Check if stock ID is provided
 if (!isset($_GET['id'])) {

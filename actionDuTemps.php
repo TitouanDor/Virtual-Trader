@@ -6,7 +6,7 @@ $dbName = 'virtual_trader';
 $dbUser = 'user'; // Replace with your database username
 $dbPass = 'password'; // Replace with your database password
 
-// Database connection
+// New database connection
 $bdd = new PDO("mysql:host=$dbHost;dbname=$dbName;charset=utf8", $dbUser, $dbPass);
 
 // Get current game state
