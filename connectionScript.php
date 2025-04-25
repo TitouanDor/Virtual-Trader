@@ -26,12 +26,13 @@ $req = $bdd->prepare("SELECT * FROM joueur WHERE email = ?");
 $req->execute([$email]);
 $data = $req->fetch();
 
-// Check if user exists and password is correct
-if ($data && password_verify($password, $data['mdp'])) {
-    session_start();
-    $_SESSION['id'] = $data['id'];
-    header('location: profil.php');
-} else {
-    header('location: index.html');
+// Check if the user exists
+if ($data) {
+    if(password_verify($password, $data['mdp'])){
+        session_start();
+        $_SESSION['id'] = $data['id'];
+        header('location: profil.php');
+    }
 }
+header('location: index.html');
 ?>

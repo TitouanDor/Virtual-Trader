@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS historique (
     id INT AUTO_INCREMENT PRIMARY KEY,
     stock_id INT NOT NULL,
     player_id INT NOT NULL,
-    price DECIMAL(10, 2) NOT NULL,
+    prix DECIMAL(10, 2) NOT NULL,
     nature VARCHAR(10) NOT NULL,
     game_month INT NOT NULL,
     game_year INT NOT NULL,

@@ -23,7 +23,7 @@ if($data != null){
 }
 
 $req = $bdd->prepare("INSERT INTO joueur(email, mdp, nom,prenom,username,argent) VALUES (?,?,?,?,?,?);");
-$req->execute([$email,$password,$nom,$prenom,$username,10000]);
+$req->execute([$email,$password,$nom,$prenom,$username,10000.00]);
 header('Location: index.html');
 exit();
 ?>

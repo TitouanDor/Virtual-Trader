@@ -12,7 +12,7 @@ $bdd = new PDO("mysql:host=$dbHost;dbname=$dbName;charset=utf8", $dbUser, $dbPas
 // Get current game state
 $req = $bdd->prepare("SELECT current_month, current_year FROM game_state WHERE id = 1");
 $req->execute();
-$gameState = $req->fetch();
+$gameState = $req->fetchAll()[0];
 
 $currentMonth = $gameState['current_month'];
 $currentYear = $gameState['current_year'];
@@ -35,6 +35,9 @@ $req = $bdd->prepare("SELECT id, dividende FROM actions WHERE date_dividende = ?
 $req->execute([$currentMonth]);
 $actionsWithDividends = $req->fetchAll();
 
+//add the dividend in the history even if there is no player owning the stock
+$req = $bdd->prepare("INSERT INTO historique (stock_id, player_id, price, nature, game_month, game_year) VALUES (?,?,?,?,?,?)");
+
 foreach ($actionsWithDividends as $action) {
     $actionId = $action['id'];
     $dividendPerShare = $action['dividende'];
@@ -53,9 +56,10 @@ foreach ($actionsWithDividends as $action) {
         $req = $bdd->prepare("UPDATE joueur SET argent = argent + ? WHERE id = ?");
         $req->execute([$totalDividend, $playerId]);
         
-        // add the dividend in the history
-        $req = $bdd->prepare("INSERT INTO historique (stock_id, player_id, price, nature, game_month, game_year) VALUES (?,?,?,?,?,?)");
         $req->execute([$actionId, $playerId, $totalDividend,'dividend', $currentMonth, $currentYear]);
+    }
+    if (count($playersWithStock) == 0){
+        $req->execute([$actionId, 0, $dividendPerShare,'dividend', $currentMonth, $currentYear]);
     }
 }
 
@@ -68,27 +72,34 @@ foreach ($stocks as $stock) {
     $stockId = $stock['id'];
     
     // Get the last month price
-    $req = $bdd->prepare("SELECT valeur_action FROM cours_marche WHERE stock_id = ? AND game_month = ? AND game_year = ?");
+    $reqLastPrice = $bdd->prepare("SELECT valeur_action FROM cours_marche WHERE stock_id = ? AND game_month = ? AND game_year = ?");
     if($currentMonth == 1){
-        $req->execute([$stockId, 12, $currentYear - 1]);
+        $lastYear = $currentYear - 1;
+        if ($lastYear < 1){
+            $lastYear = 1;
+        }
+        $reqLastPrice->execute([$stockId, 12, $lastYear]);
     }
     else{
-        $req->execute([$stockId, $currentMonth-1, $currentYear]);
+        $reqLastPrice->execute([$stockId, $currentMonth-1, $currentYear]);
     }
-    $lastPrice = $req->fetch();
-    if ($lastPrice){
-        $lastPrice = $lastPrice['valeur_action'];
-    }else{
-        $req = $bdd->prepare("SELECT prix FROM actions WHERE id = ?");
-        $req->execute([$stockId]);
-        $lastPrice = $req->fetch();
-        $lastPrice = $lastPrice['prix'];
+    $lastPriceResult = $reqLastPrice->fetchAll();
+    if (count($lastPriceResult)>0){
+        $lastPrice = $lastPriceResult[0]['valeur_action'];
+    } else {
+        $reqBasePrice = $bdd->prepare("SELECT prix FROM actions WHERE id = ?");
+        $reqBasePrice->execute([$stockId]);
+        $lastPriceResult = $reqBasePrice->fetchAll();
+        $lastPrice = $lastPriceResult[0]['prix'];
     }
-
+    
     // Calculate new price
     $randomChange = rand(-3, 3);
     $priceChange = ($lastPrice * ($randomChange / 100));
     $newPrice = $lastPrice + $priceChange;
+    
+    // add the price change in the history
+    $req = $bdd->prepare("INSERT INTO historique (stock_id, player_id, price, nature, game_month, game_year) VALUES (?,?,?,?,?,?)");
 
 
     // Apply limits
@@ -101,6 +112,11 @@ foreach ($stocks as $stock) {
     // Insert new price in cours_marche
     $req = $bdd->prepare("INSERT INTO cours_marche (stock_id, game_month, game_year, valeur_action) VALUES (?,?,?,?)");
     $req->execute([$stockId, $currentMonth, $currentYear, $newPrice]);
+    
+    // Update the price in actions
+    $req = $bdd->prepare("UPDATE actions SET prix = ? WHERE id = ?");
+    $req->execute([$newPrice, $stockId]);
+    $req->execute([$stockId, 0, $newPrice, 'price change', $currentMonth, $currentYear]);
 }
 
 ?>
