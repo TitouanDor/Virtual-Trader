@@ -16,8 +16,8 @@ $req->execute();
     <table>
         <tr>
             <th>Nom</th>
-            <th>Prénom</th>
-            <th>Date de naissance</th>
+            <th>description</th>
+            <th>prix</th>
         </tr>
         <?php
         while($data = $req->fetch())
