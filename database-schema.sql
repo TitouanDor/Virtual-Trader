@@ -72,7 +72,7 @@ CREATE TABLE IF NOT EXISTS cours_marche (
     stock_id INT NOT NULL,
     game_month INT NOT NULL,
     game_year INT NOT NULL,
-    valeur_action INT NOT NULL,
+    valeur_action DECIMAL(10, 2) NOT NULL,
     FOREIGN KEY (stock_id) REFERENCES actions(id) ON DELETE CASCADE
     
 );

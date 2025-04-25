@@ -67,10 +67,17 @@ foreach ($stocks as $stock) {
 
     $randomChange = rand(-3,3);
     // Get the last month price
+<<<<<<< Updated upstream
       // Get current game state
       $reqGetGameState = $bdd->prepare("SELECT current_month, current_year FROM game_state WHERE id = 1");
       $reqGetGameState->execute();
       $gameState = $reqGetGameState->fetch(PDO::FETCH_ASSOC);
+=======
+    // Get current game state
+    $reqGetGameState = $bdd->prepare("SELECT current_month, current_year FROM game_state WHERE id = 1");
+    $reqGetGameState->execute();
+    $gameState = $reqGetGameState->fetch(PDO::FETCH_ASSOC);
+>>>>>>> Stashed changes
     $reqLastPrice = $bdd->prepare("SELECT valeur_action FROM cours_marche WHERE stock_id = ? AND game_month = ? AND game_year = ? ");
     if ($gameState['current_month'] == 1 && $gameState['current_year'] == 1) {
         $reqLastPrice->execute([$stockId, 12, 1]);
@@ -86,7 +93,11 @@ foreach ($stocks as $stock) {
     } else {
         $reqBasePrice->execute([$stockId]);
         $lastPrice = $reqBasePrice->fetch(PDO::FETCH_ASSOC)['prix'];
+<<<<<<< Updated upstream
         
+=======
+
+>>>>>>> Stashed changes
     }
 
     // Calculate new price
@@ -117,6 +128,7 @@ foreach ($stocks as $stock) {
     $req->execute([$newPrice, $stockId]);
 }
 //Increment month and year
+<<<<<<< Updated upstream
     // Get the last game state
     $reqGetGameState = $bdd->prepare("SELECT current_month, current_year FROM game_state WHERE id = 1");
     $reqGetGameState->execute();
@@ -125,5 +137,15 @@ foreach ($stocks as $stock) {
     if ($gameState['current_month'] > 12) { $gameState['current_month'] = 1; $gameState['current_year']++;}
     $req = $bdd->prepare("UPDATE game_state SET current_month = ?, current_year = ? WHERE id = 1");
     $req->execute([$gameState['current_month'], $gameState['current_year']]);
+=======
+// Get the last game state
+$reqGetGameState = $bdd->prepare("SELECT current_month, current_year FROM game_state WHERE id = 1");
+$reqGetGameState->execute();
+$gameState = $reqGetGameState->fetch(PDO::FETCH_ASSOC);
+$gameState['current_month']++;
+if ($gameState['current_month'] > 12) { $gameState['current_month'] = 1; $gameState['current_year']++;}
+$req = $bdd->prepare("UPDATE game_state SET current_month = ?, current_year = ? WHERE id = 1");
+$req->execute([$gameState['current_month'], $gameState['current_year']]);
+>>>>>>> Stashed changes
 
 ?>
