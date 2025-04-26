@@ -142,7 +142,7 @@ if(isset($_SESSION["error"])){
 <p>Username: <?php echo $searchResult["username"] ?></p>
 <p>Email: <?php echo $searchResult["email"] ?></p>
 <p>Solde: <?php echo $searchResult["argent"] ?></p>
-<h2>Action of this user</h2>
+<h2>Actions de ce joueur</h2>
 <?php if ($investedActionsOfPlayer): ?>
     <ul>
         <?php foreach ($investedActionsOfPlayer as $action): ?>
