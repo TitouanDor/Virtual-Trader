@@ -1,49 +1,37 @@
 <?php
-
 session_start();
 
-// Check if email and password are set in the POST request
-if (!isset($_POST['email']) || !isset($_POST['password'])) {
-    header('location: index.php');
-    exit();
-}
+// Database connection
+$dbHost = 'localhost';
+$dbName = 'virtual_trader';
+$dbUser = 'root';
+$dbPass = '';
+$bdd = new PDO("mysql:host=$dbHost;dbname=$dbName;charset=utf8", $dbUser, $dbPass);
+$bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-$email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
-$password = $_POST['password'];
+// Check if the form has been submitted
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Check if all fields are filled
+    if (!empty($_POST['email']) && !empty($_POST['password'])) {
+        $email = $_POST['email'];
+        $password = $_POST['password'];
+        $req = $bdd->prepare("SELECT id, mdp FROM joueur WHERE email = ?");
+        $req->execute([$email]);
+        $user = $req->fetch();
 
-// Database connection with username and password
+        if ($user && password_verify($password, $user['password'])) {
+            // Password is correct, start a new session
+            $_SESSION['id'] = $user['id'];
 
-try {
-    $dbHost = 'localhost';
-    $dbName = 'virtual_trader';
-    $dbUser = 'root';
-    $dbPass = '';
-    $bdd = new PDO("mysql:host=$dbHost;dbname=$dbName;charset=utf8", $dbUser, $dbPass);
-    $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    $_SESSION['error'] = "Database connection error<br>" . htmlspecialchars($e->getMessage());
-    header('location: index.php'); 
-    exit();
-}
-
-// Fetch user data based on email
-$req = $bdd->prepare("SELECT * FROM joueur WHERE email = ?");
-$req->execute([$email]);
-$data = $req->fetch();
-if ($data === false) {
-    $_SESSION['error'] = "An error occurred while checking for the user.";
-    header('location: index.php');
-    exit();
-}
-// Check if the user exists
-if ($data) {
-    if(password_verify($password, $data['mdp'])){
-         $_SESSION['id'] = $data['id'];
-        header('location: profil.php');
-        exit();
+            // Redirect to profil.php
+            header('Location: profil.php');
+            exit();
+        } else {
+            header('Location: index.php');
+            exit();
+        }
     } else {
-        $_SESSION['error'] = "Incorrect email or password";
-        header('location: index.php');
+        header('Location: index.php');
         exit();
     }
 }
