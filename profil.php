@@ -19,19 +19,34 @@ if (isset($_SESSION['success'])) {
     $user = null;
     try {
         $bdd = new PDO('mysql:host=localhost;dbname=virtual_trader;charset=utf8', 'root', '');
-        $userId = $_SESSION['id'];
-        $req = $bdd->prepare("SELECT nom, prenom, email, argent FROM joueur WHERE id = ?");
-        $req->execute([$userId]);
+        try{
+            $userId = $_SESSION['id'];
+            $req = $bdd->prepare("SELECT nom, prenom, email, argent FROM joueur WHERE id = ?");
+        }catch(PDOException $e) {
+            echo "<p>Database error</p>";
+            exit();
+        }
+        if(!$req->execute([$userId])){
+           echo "<p>Database error</p>";
+        }
         $user = $req->fetch();
         if ($user === false) {
-            echo "<p>Database error</p>";
+           echo "<p>Database error</p>";
         }
-        $req = $bdd->prepare("SELECT a.nom, p.quantity FROM portefeuille p JOIN actions a ON p.stock_id = a.id WHERE p.player_id = ?");
-        $req->execute([$userId]);
+        try{
+           $req = $bdd->prepare("SELECT a.nom, p.quantity FROM portefeuille p JOIN actions a ON p.stock_id = a.id WHERE p.player_id = ?");
+        }catch(PDOException $e) {
+            echo "<p>Database error</p>";
+            exit();
+        }
+        if(!$req->execute([$userId])){
+           echo "<p>Database error</p>";
+        }
         $portfolio = $req->fetchAll();
         if ($portfolio === false){
-            echo "<p>Database error</p>";   
+           echo "<p>Database error</p>";
         }
+        
          // Get followed players
         $req = $bdd->prepare("SELECT j.username, j.id FROM followers f JOIN joueur j ON f.followed_user_id = j.id WHERE f.user_id = ?");
         $req->execute([$_SESSION['id']]);
