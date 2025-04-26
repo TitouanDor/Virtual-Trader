@@ -25,9 +25,9 @@ CREATE TABLE IF NOT EXISTS actions (
 -- Table des portefeuilles (actions possédées par les joueurs)
 CREATE TABLE IF NOT EXISTS portefeuille (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    player_id INT NOT NULL,
+    joueur_id INT NOT NULL,
     stock_id INT NOT NULL,
-    quantity INT NOT NULL DEFAULT 0,
+    quantite INT NOT NULL DEFAULT 0,
     purchase_price DECIMAL(10, 2) NOT NULL,
     purchase_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (player_id) REFERENCES joueur(id) ON DELETE CASCADE,

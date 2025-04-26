@@ -9,8 +9,6 @@
 
 <a href="leaderboard.php">Classement</a>
 <br>
-<?php session_start(); ?>
-<?php if (!isset($_SESSION['id'])): ?>
     <div name="box_connection" class="box_connection">
         <p>Connexion à Virtual-Trader</p>
         <form action="connectionScript.php" method="post">
@@ -32,11 +30,5 @@
         </form>
         <p><a href="inscription.php">Inscription</a></p>
     </div>
-<?php else: ?>
-    <div>
-        <p>Bienvenue!</p>
-    </div>
-<?php endif; ?>
-
 </body>
 </html>

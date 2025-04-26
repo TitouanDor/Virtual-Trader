@@ -6,11 +6,11 @@ if (!isset($_SESSION['id'])) {
     exit();
 }
     $bdd = new PDO('mysql:host=localhost;dbname=virtual_trader;charset=utf8', 'root', '');
-    $req = $bdd->prepare("SELECT j.username, j.argent + COALESCE(SUM(p.quantite * a.prix), 0) AS valeur_portefeuille
-                          FROM joueur j
-                          LEFT JOIN portefeuille p ON j.id = p.player_id
-                          LEFT JOIN actions a ON p.stock_id = a.id
-                          GROUP BY j.id
+    $req = $bdd->prepare("SELECT joueur.username, joueur.argent + COALESCE(SUM(portefeuille.quantite * actions.prix), 0) AS valeur_portefeuille
+                          FROM joueur
+                          LEFT JOIN portefeuille ON joueur.id = portefeuille.joueur_id
+                          LEFT JOIN actions ON portefeuille.stock_id = actions.id
+                          GROUP BY joueur.id
                           ORDER BY valeur_portefeuille DESC");
     $req->execute();
 $leaderboard = $req->fetchAll();
