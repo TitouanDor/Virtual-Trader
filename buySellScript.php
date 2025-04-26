@@ -7,7 +7,7 @@ if (!isset($_SESSION['id'])) {
 $player_id = $_SESSION['id'];
 // Check if stock ID, quantity and action are provided
 if (!isset($_POST['stock_id']) || !isset($_POST['quantity']) || !isset($_POST['action'])) {
-    $_SESSION['error'] = "Invalid data provided.";
+    $_SESSION['error'] = "Invalid data provided. Please provide the stock id, quantity, and the action you want to do.";
     header('Location: marcher.php');
     exit();
 }
@@ -27,7 +27,7 @@ try {
     $stock = $req->fetch();
 
     if (!$stock) {
-        $_SESSION['error'] = "Stock not found.";
+        $_SESSION['error'] = "The stock you are trying to buy or sell does not exist.";
         header("Location: marcher.php");
         exit();
     }
@@ -45,17 +45,12 @@ try {
     $player = $playerReq->fetch();
 
     if (!$player) {
-        $_SESSION['error'] = "Player not found.";
+        $_SESSION['error'] = "The player trying to buy or sell does not exist.";
         header("Location: marcher.php");
         exit();
     }
     $portfolioValue += $player['argent'];
     if ($portfolioValue < 1000) {
-        $_SESSION['lost'] = true;
-        $_SESSION['error'] = "You have lost the game because your portfolio value is under 1000€.";
-        header("Location: index.php");// Check if stock ID, quantity and action are provided
-        exit();
-    }
         $_SESSION['error'] = "Player not found.";
         header("Location: marcher.php");
         exit();
@@ -67,7 +62,7 @@ try {
     if ($action == 'buy') {
         $totalCost = $stockPrice * $quantity;
         if ($playerMoney < $totalCost) {
-            $_SESSION['error'] = "Insufficient funds to buy this stock.";
+            $_SESSION['error'] = "Insufficient funds to buy this stock. You need " .($totalCost - $playerMoney). "€ more.";
             header("Location: pageAction.php?id=" . $stockId);
             exit();
         }
@@ -100,7 +95,7 @@ try {
         $portfolio = $portfolioReq->fetch();
 
         if (!$portfolio || $portfolio['quantity'] < $quantity) {
-            $_SESSION['error'] = "Insufficient stocks to sell.";
+            $_SESSION['error'] = "Insufficient stocks to sell. You only have " .($portfolio ? $portfolio['quantity'] : 0). " stocks to sell.";
             header("Location: pageAction.php?id=" . $stockId);
             exit();
         }

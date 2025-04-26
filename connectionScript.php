@@ -3,15 +3,16 @@
 session_start();
 
 // Check if email and password are set in the POST request
-if (!isset($_POST['e-mail']) || !isset($_POST['mdp'])) {
+if (!isset($_POST['email']) || !isset($_POST['password'])) {
     header('location: index.php');
     exit();
 }
 
-$email = htmlspecialchars($_POST['e-mail']);
-$password = htmlspecialchars($_POST['mdp']);
+$email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
+$password = $_POST['password'];
 
 // Database connection with username and password
+
 try {
     $dbHost = 'localhost';
     $dbName = 'virtual_trader';
@@ -41,11 +42,12 @@ if ($data) {
         header('location: profil.php');
         exit();
     } else {
-        $_SESSION['error'] = "Incorrect email or password";
         header('location: index.php');
         exit();
     }
+} else {
+    $_SESSION['error'] = "Incorrect email or password";
+    
 }
- $_SESSION['error'] = "Incorrect email or password";
 header('location: index.php');
 ?>

@@ -1,6 +1,20 @@
 <?php
 session_start();
 
+// Database connection
+try {
+    $dbHost = 'localhost';
+    $dbName = 'virtual_trader';
+    $dbUser = 'root';
+    $dbPass = '';
+    $bdd = new PDO("mysql:host=$dbHost;dbname=$dbName;charset=utf8", $dbUser, $dbPass);
+    $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    $_SESSION['error'] = "Database connection error<br>" . $e->getMessage();
+    header('location: index.html');
+    exit();
+}
+
 // Check if the user is connected and lost
 if(isset($_SESSION['id'])){
     // Database connection
@@ -20,21 +34,7 @@ if(isset($_SESSION['id'])){
     $req->execute([$_SESSION['id']]);
     if($req->fetch()){
         $_SESSION['error'] = "You have lost the game !";
-    }
-}
-// Database connection
-try {
-    $dbHost = 'localhost';
-    $dbName = 'virtual_trader';
-    $dbUser = 'root';
-    $dbPass = '';
-    $bdd = new PDO("mysql:host=$dbHost;dbname=$dbName;charset=utf8", $dbUser, $dbPass);
-    $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    $_SESSION['error'] = "Database connection error\n" . $e->getMessage();
-    header('location: index.html');
-    exit();
-}
+    }}
 
 // Get the current game state
 $gameStateReq = $bdd->prepare("SELECT * FROM game_state");
@@ -158,16 +158,6 @@ if (isset($_SESSION['success'])) {
 }
 ?>
 
-<a href="leaderboard.php">Leaderboard</a>
-<br>
-<?php 
-if (isset($_SESSION['error'])) {
-    echo "<p>";
-    echo str_replace("\n", "<br>", $_SESSION['error']);
-    echo "</p>";
-    unset($_SESSION['error']);
-}?>
-
 
 <!DOCTYPE html>
 <html lang="fr">
@@ -178,23 +168,39 @@ if (isset($_SESSION['error'])) {
 </head>
 <body>
 
-    <?php if(isset($_SESSION['error'])): ?>
+<?php
+if (isset($_SESSION['error'])) {
+    echo "<p>";
+    echo str_replace("\n", "<br>", $_SESSION['error']);
+    echo "</p>";
+    unset($_SESSION['error']);
+}
 
-    <?php else: ?>
+if (isset($_SESSION['success'])) {
+    echo "<p>";
+    echo str_replace("\n", "<br>", $_SESSION['success']);
+    echo "</p>";
+    unset($_SESSION['success']);
+}
+?>
+<a href="leaderboard.php">Leaderboard</a>
+<br>
+    <?php if(!isset($_SESSION['id'])): ?>
+    
 
     <div name="box_connection" class="box_connection">
         <p>Connection à Virtual-trader</p>
         <form action="connectionScript.php" method="post">
 
             <div class="group-from">
-                <label>
-                    <input type="text" name="e-mail" placeholder="E-mail">
+                <label for="email">
+                    <input type="text" name="email" id="email" placeholder="E-mail" value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : '' ?>">
                 </label>
             </div>
 
             <div class="group-from">
-                <label>
-                    <input type="password" name="mdp" placeholder="mot de passe">
+                <label for="password">
+                    <input type="password" name="password" id="password" placeholder="mot de passe">
                 </label>
             </div>
 
@@ -207,7 +213,7 @@ if (isset($_SESSION['error'])) {
 
         <p><a href="inscription.php">Inscription</a></p>
     </div>
-    <?php endif; ?>
+<?php endif; ?>
 
 </body>
 </html>

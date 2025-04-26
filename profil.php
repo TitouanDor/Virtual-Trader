@@ -54,8 +54,7 @@ if (isset($_SESSION['success'])) {
         if ($followedPlayers === false) {
             echo "<p>Database error</p>";
         }
-        ?>
-    </div>
+    
 <div id="followed-players">
     <?php
         }
@@ -63,7 +62,7 @@ if (isset($_SESSION['success'])) {
         echo "<p>Database connection error</p>";
         exit();
     }
-    </div>
+    
 
 
     <?php

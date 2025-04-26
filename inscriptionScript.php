@@ -1,37 +1,47 @@
 <?php
 session_start();
-$password = PASSWORD_HASH($_POST['mdp'], PASSWORD_DEFAULT);
+
+// Database connection
 try {
     $bdd = new PDO('mysql:host=localhost;dbname=virtual_trader;charset=utf8', 'root', '');
 } catch (PDOException $e) {
-    $_SESSION['error'] = "Erreur de connexion à la base de données : " . $e->getMessage();
+    $_SESSION['error'] = "Database connection error";
     header('Location: inscription.php');
     exit();
 }
-$nom = $_POST['nom'];
-$prenom = $_POST['prenom'];
-$email = $_POST['e-mail'];
-$username = $_POST['username'];
+
+// Sanitize and filter inputs
+$nom = htmlspecialchars(filter_var($_POST['nom'], FILTER_SANITIZE_STRING));
+$prenom = htmlspecialchars(filter_var($_POST['prenom'], FILTER_SANITIZE_STRING));
+$email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
+$username = htmlspecialchars(filter_var($_POST['username'], FILTER_SANITIZE_STRING));
+$password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+
+// Check if the email is valid
+if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
+    $_SESSION['error'] = "Invalid email";
+    header('Location: inscription.php');
+    exit();
+}
 
 $req = $bdd->prepare("SELECT email FROM joueur WHERE email = ?");
 try {
     $req->execute([$email]);
     $data = $req->fetch();
 } catch (PDOException $e) {
-    $_SESSION['error'] = "Erreur lors de la vérification de l'email : " . $e->getMessage();
+    $_SESSION['error'] = "Error while verifying the email";
     header('Location: inscription.php');
     exit();
 }
 
 if ($data != null) {
-    $_SESSION['valid'] = 1;
-    $_SESSION['error'] = "Cet email est déjà utilisé";
+    $_SESSION['error'] = "This email is already used";
     header('Location: inscription.php');
     exit();
 }
 
 try {
-    $req = $bdd->prepare("INSERT INTO joueur(email, mdp, nom, prenom, username, argent) VALUES (?,?,?,?,?,?);");
+    $req = $bdd->prepare("INSERT INTO joueur(email, mdp, nom, prenom, username, argent) VALUES (?,?,?,?,?,?)");
     $req->execute([$email, $password, $nom, $prenom, $username, 10000.00]);
     // Check if a game already exists
     $req = $bdd->prepare("SELECT * FROM game_state");
@@ -41,7 +51,7 @@ try {
     if (!$game) {
         // If no game exists, create a new game
         // Initialize game state
-        $req = $bdd->prepare("INSERT INTO game_state (current_month, current_year) VALUES (1, 1)");
+        $req = $bdd->prepare("INSERT INTO game_state (current_month, current_year, last_update) VALUES (1, 1, NOW())");
         $req->execute();
 
         // Get the new game id
@@ -77,15 +87,11 @@ try {
     header('Location: index.php');//
     exit();
 } catch (PDOException $e) {
-    $_SESSION['error'] = "Erreur lors de l'insertion du joueur : " . $e->getMessage();
+    $_SESSION['error'] = "Error during the creation of the user";
     header('Location: inscription.php');
     exit();
 }
 
 
 
-
-
-
-exit();
 ?>

@@ -7,15 +7,15 @@ if (!isset($_SESSION['id'])) {
     exit();
 }
 
-if (!isset($_POST['currentPassword']) || !isset($_POST['newPassword']) || !isset($_POST['confirmNewPassword'])) {
+if (!isset($_POST['current_password']) || !isset($_POST['new_password']) || !isset($_POST['confirm_password'])) {
     $_SESSION['error'] = "Please fill in all fields.";
     header("location: changePassword.php");
     exit();
 }
 
-$currentPassword = $_POST['currentPassword'];
-$newPassword = $_POST['newPassword'];
-$confirmNewPassword = $_POST['confirmNewPassword'];
+$currentPassword = $_POST['current_password'];
+$newPassword = $_POST['new_password'];
+$confirmNewPassword = $_POST['confirm_password'];
 $userId = $_SESSION['id'];
 
 try {
