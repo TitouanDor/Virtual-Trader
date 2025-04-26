@@ -39,7 +39,7 @@ $gameStateReq = $bdd->prepare("SELECT * FROM game_state");
             $updateDateReq = $bdd->prepare("UPDATE game_state SET current_month = ?, current_year = ?, last_update = ?");
             $updateDateReq->execute([$currentMonth, $currentYear, $currentTime->format('Y-m-d H:i:s')]);
             //give dividends
-           $dividendReq = $bdd->prepare("SELECT j.id, j.argent, a.dividende FROM joueur j JOIN portefeuille p ON j.id = p.player_id JOIN actions a ON p.stock_id = a.id WHERE a.date_dividende = ?");
+           $dividendReq = $bdd->prepare("SELECT joueur.id, joueur.argent, actions.dividende FROM joueur JOIN portefeuille ON joueur.id = portefeuille.joueur_id JOIN actions ON portefeuille.action_id = actions.id WHERE actions.date_dividende = ?");
            $dividendReq->execute([$currentMonth]);
            $players = $dividendReq->fetchAll();
            foreach($players as $player){
@@ -56,14 +56,14 @@ $gameStateReq = $bdd->prepare("SELECT * FROM game_state");
                $lastYear = $currentMonth == 1 ? $currentYear - 1 : $currentYear;
            
                 // Check if we have the last price
-                $lastPriceExistReq = $bdd->prepare("SELECT COUNT(*) AS count FROM cours_marche WHERE stock_id = ? AND game_month = ? AND game_year = ?");
+                $lastPriceExistReq = $bdd->prepare("SELECT COUNT(*) AS count FROM cours_marche WHERE action_id = ? AND game_month = ? AND game_year = ?");
                 $lastPriceExistReq->execute([$stock['id'], $lastMonth, $lastYear]);
                 $lastPriceExist = $lastPriceExistReq->fetch();
 
                 if ($lastPriceExist['count'] == 0) {
                     $percent = 0;
                 } else {
-                    $lastPriceReq = $bdd->prepare("SELECT valeur_action FROM cours_marche WHERE stock_id = ? AND game_month = ? AND game_year = ?");
+                    $lastPriceReq = $bdd->prepare("SELECT valeur_action FROM cours_marche WHERE action_id = ? AND game_month = ? AND game_year = ?");
                     $lastPriceReq->execute([$stock['id'], $lastMonth, $lastYear]);
                     $lastPrice = $lastPriceReq->fetch();
 
@@ -78,7 +78,7 @@ $gameStateReq = $bdd->prepare("SELECT * FROM game_state");
                 $newPrice = max(1, $newPrice);
                 $newPriceReq = $bdd->prepare("UPDATE actions SET prix = ? WHERE id = ?");
                 $newPriceReq->execute([$newPrice, $stock['id']]);
-                $addCoursReq = $bdd->prepare("INSERT INTO cours_marche (stock_id, game_month, game_year, valeur_action) VALUES (?, ?, ?, ?)");
+                $addCoursReq = $bdd->prepare("INSERT INTO cours_marche (action_id, game_month, game_year, valeur_action) VALUES (?, ?, ?, ?)");
                 $addCoursReq->execute([$stock['id'], $currentMonth, $currentYear, $newPrice]);
            }
         }        
@@ -88,7 +88,7 @@ $userReq = $bdd->prepare("SELECT nom, prenom, email, argent FROM joueur WHERE id
 $userReq->execute([$_SESSION['id']]);
 $user = $userReq->fetch();
 
-$investedActionsReq = $bdd->prepare("SELECT a.nom, p.quantite FROM portefeuille p JOIN actions a ON p.stock_id = a.id WHERE p.player_id = ?");// Récupération des actions investies
+$investedActionsReq = $bdd->prepare("SELECT actions.nom, portefeuille.quantite FROM portefeuille JOIN actions ON portefeuille.action_id = actions.id WHERE portefeuille.joueur_id = ?");// Récupération des actions investies
 $investedActionsReq->execute([$_SESSION['id']]);
 $investedActions = $investedActionsReq->fetchAll();
 
@@ -188,7 +188,7 @@ if (!$player) {
 }
 
 // Get player's history
-$historyReq = $bdd->prepare("SELECT h.*, a.nom AS action_name FROM historique h JOIN actions a ON h.action_id = a.id WHERE h.player_id = ? ORDER BY h.real_date DESC");
+$historyReq = $bdd->prepare("SELECT historique.*, actions.nom AS action_name FROM historique JOIN actions ON historique.action_id = actions.id WHERE historique.joueur_id = ? ORDER BY historique.real_date DESC");
 $historyReq->execute([$playerId]);
 $history = $historyReq->fetchAll();
 if (isset($_SESSION['success'])) {

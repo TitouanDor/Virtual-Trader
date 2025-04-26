@@ -12,9 +12,9 @@ $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 // Vérifier si le formulaire a été soumis
 if ($_SERVER["REQUEST_METHOD"] == "POST") { // Si la requête est de type POST
     // Vérifier si tous les champs sont remplis
-    if (!empty($_POST['email']) && !empty($_POST['password'])) { // Si les champs email et mot de passe sont remplis
+    if (!empty($_POST['email']) && !empty($_POST['mdp'])) { // Si les champs email et mot de passe sont remplis
         $email = $_POST['email']; // Récupérer l'email depuis le formulaire
-        $mdp = $_POST['password']; // Récupérer le mot de passe depuis le formulaire (nom modifié en 'mdp')
+        $mdp = $_POST['mdp']; // Récupérer le mot de passe depuis le formulaire (nom modifié en 'mdp')
         $req = $bdd->prepare("SELECT id, mdp FROM joueur WHERE email = ?"); // Préparer la requête SQL pour sélectionner l'id et le mot de passe de l'utilisateur
         $req->execute([$email]); // Exécuter la requête avec l'email fourni
         $user = $req->fetch(); // Récupérer l'utilisateur trouvé

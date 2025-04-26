@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS followers (
 CREATE TABLE IF NOT EXISTS historique (
     id INT AUTO_INCREMENT PRIMARY KEY,
     action_id INT NOT NULL,
-    joueur_id INT NOT NULL,
+    joueur_id INT ,
     prix DECIMAL(10, 2) NOT NULL,
     nature VARCHAR(10) NOT NULL,
     game_month INT NOT NULL,

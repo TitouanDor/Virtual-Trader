@@ -28,10 +28,10 @@ foreach ($actionsWithDividends as $action) {
     $actionId = $action['id'];
     $dividendeParAction = $action['dividende'];
     // Ajouter le dividende dans l'historique
-    $reqHistory = $bdd->prepare("INSERT INTO historique (stock_id, player_id, prix, nature, game_month, game_year) VALUES (?,?,?,?,?,?)");
+    $reqHistory = $bdd->prepare("INSERT INTO historique (action_id, joueur_id, prix, nature, game_month, game_year) VALUES (?,?,?,?,?,?)");
 
     // Récupérer les joueurs qui possèdent l'action
-    $req = $bdd->prepare("SELECT player_id, quantite FROM portefeuille WHERE stock_id = ?");
+    $req = $bdd->prepare("SELECT joueur_id, quantite FROM portefeuille WHERE action_id = ?");
     $req->execute([$actionId]);
     $joueursAvecAction = $req->fetchAll();
 
@@ -45,7 +45,7 @@ foreach ($actionsWithDividends as $action) {
         $req->execute([$dividendeTotal, $joueurId]);
         $reqHistory->execute([$actionId, $joueurId, $dividendeParAction, 'dividende', $gameState['current_month'], $gameState['current_year']]);
     }if (count($joueursAvecAction) == 0) {
-        $reqHistory->execute([$actionId, 0, $dividendeParAction, 'dividende', $gameState['current_month'], $gameState['current_year']]);
+        $reqHistory->execute([$actionId, $joueurId, $dividendeParAction, 'dividende', $gameState['current_month'], $gameState['current_year']]);
     }
 }
 // Mettre à jour les prix des actions
@@ -60,7 +60,7 @@ foreach ($stocks as $action) {
     $changementAleatoire = rand(-3,3);
     // Récupérer le prix du mois dernier
 
-    $reqLastPrice = $bdd->prepare("SELECT valeur_action FROM cours_marche WHERE stock_id = ? AND game_month = ? AND game_year = ? ");
+    $reqLastPrice = $bdd->prepare("SELECT valeur_action FROM cours_marche WHERE action_id = ? AND game_month = ? AND game_year = ? ");
     if ($gameState['current_month'] == 1 && $gameState['current_year'] == 1) {
         $reqLastPrice->execute([$actionId, 12, 1]);
     } elseif ($gameState['current_month'] == 1) {
@@ -91,12 +91,12 @@ foreach ($stocks as $action) {
 
 
     // Ajouter le changement de prix dans l'historique
-    $req = $bdd->prepare("INSERT INTO historique (stock_id, player_id, prix, nature, game_month, game_year) VALUES (?,?,?,?,?,?)");
+    $req = $bdd->prepare("INSERT INTO historique (action_id, joueur_id, prix, nature, game_month, game_year) VALUES (?,?,?,?,?,?)");
 
     // Insérer le nouveau prix dans cours_marche
-    $reqCours = $bdd->prepare("INSERT INTO cours_marche (stock_id, game_month, game_year, valeur_action) VALUES (?,?,?,?)");
+    $reqCours = $bdd->prepare("INSERT INTO cours_marche (action_id, game_month, game_year, valeur_action) VALUES (?,?,?,?)");
     $reqCours->execute([$actionId, $gameState['current_month'], $gameState['current_year'], $nouveauPrix]);
-    $req->execute([$actionId, 0, $nouveauPrix, 'changement_prix', $gameState['current_month'], $gameState['current_year']]);
+    $req->execute([$actionId, NULL, $nouveauPrix, 'changement_prix', $gameState['current_month'], $gameState['current_year']]);
 
     // Mettre à jour le prix dans actions
     $req = $bdd->prepare("UPDATE actions SET prix = ? WHERE id = ?");
