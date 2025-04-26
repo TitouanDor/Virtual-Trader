@@ -1,14 +1,11 @@
 <?php
 session_start();
 if (isset($_SESSION['error'])) {
-    echo "<p>" . str_replace("\\n", "<br>", $_SESSION['error']) . "</p>";
+    echo "<p>" . str_replace("\n", "<br>", $_SESSION['error']) . "</p>";
     unset($_SESSION['error']);
 }
 if (isset($_SESSION['success'])) {
-    echo "<p>" . str_replace("\\n", "<br>", $_SESSION['success']) . "</p>";
-    unset($_SESSION['success']);
-}
-    echo "<p>" . str_replace("\\n", "<br>", $_SESSION['success']) . "</p>";
+    echo "<p>" . str_replace("\n", "<br>", $_SESSION['success']) . "</p>";
     unset($_SESSION['success']);
 }
 ?>
@@ -38,9 +35,8 @@ if (isset($_SESSION['success'])) {
 <div>
     <a href="changePassword.php">Change password</a>
 </div>
+<div>
     <a href="index.php">Se deconnecter</a>
-    <br>
-    <br>
 </div>
 <div>
     <form action="searchPlayerScript.php" method="post">
@@ -58,33 +54,30 @@ if (isset($_SESSION['success'])) {
         if ($followedPlayers === false) {
             echo "<p>Database error</p>";
         }
-        if ($followedPlayers) {
-            echo "<p>Followed players:</p>";
-            foreach ($followedPlayers as $player) {
-                echo "<p><a href='playerProfil.php?id=".htmlspecialchars($player['id'])."'>" . htmlspecialchars($player['username']) . "</a></p>";
-            }
-        } else {
-            echo "<p>You don't follow anyone</p>";
+        ?>
+    </div>
+<div id="followed-players">
+    <?php
         }
-    } catch (PDOException $e) {
+    } catch(PDOException $e){
         echo "<p>Database connection error</p>";
         exit();
     }
+    </div>
+
+
+    <?php
+    if (isset($_SESSION['searchResult'])) {
+        $user = $_SESSION['searchResult'];
+        echo "<p>" . htmlspecialchars($user['username']) . "</p>";
+        echo "<form action='followScript.php' method='post'>";
+        echo "<input type='hidden' name='followed_user_id' value='" . $user['id'] . "'>";
+        echo "<button type='submit'>" . (isset($isFollowing) && $isFollowing ? "Unfollow" : "Follow") . "</button>";
+        echo "</form>";
+        unset($_SESSION['searchResult']);
+    }
     ?>
 </div>
-<div id="search-result">
-        <?php
-        if (isset($_SESSION['searchResult'])) {
-            $user = $_SESSION['searchResult'];
-            echo "<p>" . htmlspecialchars($user['username']) . "</p>";
-            echo "<form action='followScript.php' method='post'>";
-            echo "<input type='hidden' name='followed_user_id' value='" . $user['id'] . "'>";
-            echo "<button type='submit'>" . (isset($isFollowing) && $isFollowing ? "Unfollow" : "Follow") . "</button>";
-            echo "</form>";
-            unset($_SESSION['searchResult']);
-        }
-        ?>
-    </div>
 <div id="followed-players">
     <?php
     try {
@@ -104,7 +97,8 @@ if (isset($_SESSION['success'])) {
         echo "<p>Database connection error</p>";
         exit();
     }
-    </div>
+    ?>
+</div>
 
 
     <?php
@@ -160,11 +154,11 @@ if (isset($_SESSION['success'])) {
         if ($portfolio === false){
             echo "<p>Database error</p>";
         
-        }        
+        }
     } catch (PDOException $e) {
         echo "<p>Database error</p>";
     }
-        if (!empty($portfolio)) {
+    if (!empty($portfolio)) {
             echo "<ul>";
             foreach ($portfolio as $stock) {
                 echo "<li>" . $stock['nom'] . " - Quantity: " . $stock['quantity'] . "</li>";
@@ -173,7 +167,7 @@ if (isset($_SESSION['success'])) {
         } else {
             echo "<p>You don't have any stocks in your portfolio.</p>";
         }
-    ?>
+        ?>
 
 </body>
 </html>
