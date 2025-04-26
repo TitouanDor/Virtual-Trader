@@ -133,9 +133,10 @@ if(isset($_SESSION["error"])){
 <?php endif; ?>
     <h2>Rechercher des joueurs</h2>
 <form action="searchPlayerScript.php" method="post">
-        <input type="text" name="search" placeholder="Rechercher par e-mail ou nom d'utilisateur">
+        <input type="text" name="search" placeholder="e-mail/username">
         <input type="submit" value="Rechercher">
 </form>
+
 
 <?php if(isset($searchResult)):?>
 <p>Username: <?php echo $searchResult["username"] ?></p>
