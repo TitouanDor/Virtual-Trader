@@ -25,8 +25,13 @@ if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
 }
 
 // Check if the email already exists
-$req = $bdd->prepare("SELECT email FROM joueur WHERE email = ?");
 try {
+    $req = $bdd->prepare("SELECT email FROM joueur WHERE email = ?");
+} catch (PDOException $e) {
+    $_SESSION['error'] = "Database error";
+    header('Location: inscription.php');
+    exit();
+}
     $req->execute([$email]);
     $data = $req->fetch();
 } catch (PDOException $e) {
@@ -47,31 +52,55 @@ try {
     $req = $bdd->prepare("INSERT INTO joueur(email, mdp, nom, prenom, username, argent) VALUES (?,?,?,?,?,?)");
     $req->execute([$email, $password, $nom, $prenom, $username, 10000.00]);
     // Check if a game already exists
-    $req = $bdd->prepare("SELECT * FROM game_state");
+    try {
+        $req = $bdd->prepare("SELECT * FROM game_state");
+    } catch (PDOException $e) {
+        $_SESSION['error'] = "Database error";
+        header('Location: inscription.php');
+        exit();
+    }
     $req->execute();
     $game = $req->fetch();
 
     if (!$game) {
         // If no game exists, create a new game
         // Initialize game state
-        $req = $bdd->prepare("INSERT INTO game_state (current_month, current_year, last_update) VALUES (1, 1, NOW())");
+        try{
+            $req = $bdd->prepare("INSERT INTO game_state (current_month, current_year, last_update) VALUES (1, 1, NOW())");
+        } catch (PDOException $e) {
+            $_SESSION['error'] = "Database error";
+            header('Location: inscription.php');
+            exit();
+        }
         $req->execute();
 
         // Get the new game id
         $gameId = $bdd->lastInsertId();
 
         // Get all stock IDs
-        $req = $bdd->prepare("SELECT id FROM actions");
+        try{
+            $req = $bdd->prepare("SELECT id FROM actions");
+        } catch (PDOException $e) {
+            $_SESSION['error'] = "Database error";
+            header('Location: inscription.php');
+            exit();
+        }
         $req->execute();
         $stocks = $req->fetchAll();
 
         // Create market data for the next 12 months for each stock
         $game_month = 1;
         $game_year = 1;
-        for ($i = 0; $i < 12; $i++) {
+        for ($i = 0; $i < 12; $i++) {    
             foreach ($stocks as $stock) {
                 // Get the value of the stock
-                $req = $bdd->prepare("SELECT prix FROM actions WHERE id = ?");
+                try{
+                    $req = $bdd->prepare("SELECT prix FROM actions WHERE id = ?");
+                } catch (PDOException $e) {
+                    $_SESSION['error'] = "Database error";
+                    header('Location: inscription.php');
+                    exit();
+                }
                 $req->execute([$stock['id']]);
                 $stock_prix = $req->fetch();
                 // Insert market data for each stock
@@ -82,6 +111,7 @@ try {
             if($game_month > 12){
                 $game_month = 1;
                 $game_year ++;
+
             }
         }
     }
