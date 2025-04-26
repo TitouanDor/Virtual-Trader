@@ -5,14 +5,16 @@ if (!isset($_SESSION['id'])) {
     header('location: index.html');
     exit();
 }
-    $bdd = new PDO('mysql:host=localhost;dbname=virtual_trader;charset=utf8', 'root', '');
-    $req = $bdd->prepare("SELECT joueur.username, joueur.argent + COALESCE(SUM(portefeuille.quantite * actions.prix), 0) AS valeur_portefeuille
-                          FROM joueur
-                          LEFT JOIN portefeuille ON joueur.id = portefeuille.joueur_id
-                          LEFT JOIN actions ON portefeuille.action_id = actions.id
-                          GROUP BY joueur.id
-                          ORDER BY valeur_portefeuille DESC");
-    $req->execute();
+$bdd = new PDO('mysql:host=localhost;dbname=virtual_trader;charset=utf8', 'root', '');
+$bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+$req = $bdd->prepare("SELECT joueur.username, joueur.argent + COALESCE(SUM(portefeuille.quantite * actions.prix), 0) AS valeur_portefeuille
+                      FROM joueur
+                      LEFT JOIN portefeuille ON joueur.id = portefeuille.joueur_id
+                      LEFT JOIN actions ON portefeuille.action_id = actions.id
+                      GROUP BY joueur.id
+                      ORDER BY valeur_portefeuille DESC");
+$req->execute();
 $leaderboard = $req->fetchAll();
 
 
@@ -21,7 +23,7 @@ $leaderboard = $req->fetchAll();
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8">    
     <title>Leaderboard</title>
     <a href="index.html">Retour à l'index</a>
 </head>
