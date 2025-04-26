@@ -1,6 +1,7 @@
 <?php
 session_start();
 
+
 // Database connection
 try {
     $dbHost = 'localhost';
@@ -10,10 +11,10 @@ try {
     $bdd = new PDO("mysql:host=$dbHost;dbname=$dbName;charset=utf8", $dbUser, $dbPass);
     $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
-    $_SESSION['error'] = "Database connection error<br>" . $e->getMessage();
-    header('location: index.html');
+    $_SESSION['error'] = "Database connection error: " . $e->getMessage();
+    header('Location: index.php'); // Redirect to itself to display error
     exit();
-}
+}   
 
 // Check if the user is connected and lost
 if(isset($_SESSION['id'])){
@@ -21,20 +22,21 @@ if(isset($_SESSION['id'])){
         $req = $bdd->prepare("SELECT j.id FROM joueur j WHERE j.id = ? AND j.id NOT IN (SELECT p.player_id FROM portefeuille p) AND j.argent < 1000");
     } catch(PDOException $e) {
         $_SESSION['error'] = "Database error";
-        header('location: index.html');
+        header('Location: index.php');
         exit();
     }
     $req->execute([$_SESSION['id']]);
     if($req->fetch()){
         $_SESSION['error'] = "You have lost the game !";
-    }}
+    }
+}
 
 // Get the current game state
 try{
     $gameStateReq = $bdd->prepare("SELECT * FROM game_state");
 }catch(PDOException $e) {
-    $_SESSION['error'] = "Database error\n";
-    header('location: index.html');
+    $_SESSION['error'] = "Database error: " . $e->getMessage();
+    header('Location: index.php');
     exit();
 }
 
@@ -42,7 +44,7 @@ if (!$gameStateReq->execute()) {
     $_SESSION['error'] = "Database error\n";
     header('location: index.html');
     exit();
-}
+}   
 $gameState = $gameStateReq->fetch();
 
 $lastUpdate = new DateTime($gameState['last_update']);
@@ -61,8 +63,8 @@ if ($currentTime->diff($lastUpdate)->i >= 1) {
     try{
         $updateDateReq = $bdd->prepare("UPDATE game_state SET current_month = ?, current_year = ?, last_update = ?");
     } catch(PDOException $e) {
-        $_SESSION['error'] = "Database error";
-        header('location: index.html');
+        $_SESSION['error'] = "Database error: " . $e->getMessage();
+        header('Location: index.php');
         exit();
     }
     if (!$updateDateReq->execute([$currentMonth, $currentYear, $currentTime->format('Y-m-d H:i:s')])) {
@@ -74,8 +76,8 @@ if ($currentTime->diff($lastUpdate)->i >= 1) {
     try{
         $dividendReq = $bdd->prepare("SELECT j.id, j.argent, a.dividende FROM joueur j JOIN portefeuille p ON j.id = p.player_id JOIN actions a ON p.stock_id = a.id WHERE a.date_dividende = ?");
     } catch(PDOException $e) {
-        $_SESSION['error'] = "Database error";
-        header('location: index.html');
+        $_SESSION['error'] = "Database error: " . $e->getMessage();
+        header('Location: index.php');
         exit();
     }
     if (!$dividendReq->execute([$currentMonth])) {
@@ -89,8 +91,8 @@ if ($currentTime->diff($lastUpdate)->i >= 1) {
         try{
             $updateMoney = $bdd->prepare("UPDATE joueur SET argent = ? WHERE id = ?");
         } catch(PDOException $e) {
-            $_SESSION['error'] = "Database error";
-            header('location: index.html');
+            $_SESSION['error'] = "Database error: " . $e->getMessage();
+            header('Location: index.php');
             exit();
         }
         if (!$updateMoney->execute([$new_money, $player['id']])) {
@@ -103,8 +105,8 @@ if ($currentTime->diff($lastUpdate)->i >= 1) {
     try{
         $stocksReq = $bdd->prepare("SELECT id, prix FROM actions");
     } catch(PDOException $e) {
-        $_SESSION['error'] = "Database error";
-        header('location: index.html');
+        $_SESSION['error'] = "Database error: " . $e->getMessage();
+        header('Location: index.php');
         exit();
     }
     if (!$stocksReq->execute()) {
@@ -121,8 +123,8 @@ if ($currentTime->diff($lastUpdate)->i >= 1) {
         try{
             $lastPriceExistReq = $bdd->prepare("SELECT COUNT(*) AS count FROM cours_marche WHERE stock_id = ? AND game_month = ? AND game_year = ?");
         } catch(PDOException $e) {
-            $_SESSION['error'] = "Database error";
-            header('location: index.html');
+            $_SESSION['error'] = "Database error: " . $e->getMessage();
+            header('Location: index.php');
             exit();
         }
         if (!$lastPriceExistReq->execute([$stock['id'], $lastMonth, $lastYear])) {
@@ -137,8 +139,8 @@ if ($currentTime->diff($lastUpdate)->i >= 1) {
             try{
                 $lastPriceReq = $bdd->prepare("SELECT valeur_action FROM cours_marche WHERE stock_id = ? AND game_month = ? AND game_year = ?");
             } catch(PDOException $e) {
-                $_SESSION['error'] = "Database error";
-                header('location: index.html');
+                $_SESSION['error'] = "Database error: " . $e->getMessage();
+                header('Location: index.php');
                 exit();
             }
             if (!$lastPriceReq->execute([$stock['id'], $lastMonth, $lastYear])) {
@@ -167,8 +169,8 @@ if ($currentTime->diff($lastUpdate)->i >= 1) {
         try{
             $newPriceReq = $bdd->prepare("UPDATE actions SET prix = ? WHERE id = ?");
         } catch(PDOException $e) {
-            $_SESSION['error'] = "Database error";
-            header('location: index.html');
+            $_SESSION['error'] = "Database error: " . $e->getMessage();
+            header('Location: index.php');
             exit();
         }
         if (!$newPriceReq->execute([$newPrice, $stock['id']])) {
@@ -179,8 +181,8 @@ if ($currentTime->diff($lastUpdate)->i >= 1) {
         try{
             $addCoursReq = $bdd->prepare("INSERT INTO cours_marche (stock_id, game_month, game_year, valeur_action) VALUES (?, ?, ?, ?)");
         } catch(PDOException $e) {
-            $_SESSION['error'] = "Database error";
-            header('location: index.html');
+            $_SESSION['error'] = "Database error: " . $e->getMessage();
+            header('Location: index.php');
             exit();
         }
         if (!$addCoursReq->execute([$stock['id'], $currentMonth, $currentYear, $newPrice])) {
@@ -190,6 +192,7 @@ if ($currentTime->diff($lastUpdate)->i >= 1) {
         }
     }
 }
+
 ?>
 <a href="leaderboard.php">Leaderboard</a>
 <br>
@@ -217,12 +220,34 @@ if (isset($_SESSION['success'])) {
     echo "</p>";
     unset($_SESSION['success']);
 }
-if(!isset($_SESSION['id'])): ?>
 
+?>
+<?php if (!isset($_SESSION['id'])): ?>
+    <div name="box_connection" class="box_connection">
+        <p>Connection à Virtual-trader</p>
+        <form action="connectionScript.php" method="post">
+            <div class="group-from">
+                <label for="email">
+                    <input type="text" name="email" id="email" placeholder="E-mail" value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : '' ?>">
+                </label>
+            </div>
+            <div class="group-from">
+                <label for="password">
+                    <input type="password" name="password" id="password" placeholder="mot de passe">
+                </label>
+            </div>
+            <div class="group-from">
+                <label>
+                    <input type="submit" value="Se connecter">
+                </label>
+            </div>
+        </form>
+        <p><a href="inscription.php">Inscription</a></p>
+    </div>
+<?php else: ?>
+    <div>
+        <p>You are connected!</p>
+    </div>
 <?php endif; ?>
-
 </body>
 </html>
-
-
-<?php
