@@ -176,7 +176,6 @@ if(isset($_SESSION["error"])){
 <?php endif; ?>
 <?php elseif (isset($error)): echo "<p>".$error."</p>"; endif;?>
 
-<a href="changePassword.php">Changer de mot de passe</a>
 <?php if ($followedPlayers): ?>
     <h2>Players followed by you</h2>
     <ul>
@@ -187,8 +186,10 @@ if(isset($_SESSION["error"])){
 <?php else: ?>
     <p>You are not following anyone.</p>
 <?php endif; ?>
-<br>
-<a href="logout.php">Déconnexion</a>
-<br><a href="leaderboard.php?from=profil">Classement</a>
+    <a href="changePassword.php">Changer de mot de passe</a>
+    <br>
+    <a href="leaderboard.php?from=profil">Classement</a>
+    <br>
+    <a href="logout.php">Déconnexion</a>
 </body>
 </html>
