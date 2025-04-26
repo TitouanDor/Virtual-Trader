@@ -92,11 +92,10 @@ $investedActionsReq->execute([$_SESSION['id']]);
 $investedActions = $investedActionsReq->fetchAll();
 
 // Recherche de joueur
-if (isset($_GET['search']) && !empty($_GET['search'])) {
-    $search = htmlspecialchars($_GET['search']);
-    $searchReq = $bdd->prepare("SELECT id, nom, prenom, email FROM joueur WHERE email LIKE ?");
-    $searchReq->execute(["%" . $search . "%"]);
-    $searchResults = $searchReq->fetchAll();
+if (isset($_SESSION['search_result'])) {
+    $searchResults = [$_SESSION['search_result']]; // Wrap the single result in an array
+    unset($_SESSION['search_result']); // Clear the search result
+    
 }
 
 ?>
@@ -127,17 +126,17 @@ if (isset($_GET['search']) && !empty($_GET['search'])) {
         <p>Vous n'avez pas encore investi dans des actions.</p>
 <?php endif; ?>
     <h2>Rechercher des joueurs</h2>
-<form action="profil.php" method="get">
-        <input type="text" name="search" placeholder="Rechercher par e-mail">
+<form action="searchPlayerScript.php" method="post">
+        <input type="text" name="search" placeholder="Rechercher par e-mail ou nom d'utilisateur">
         <input type="submit" value="Rechercher">
 </form>
 
 <?php if (isset($searchResults) && $searchResults): ?>
     <h2>Search Results</h2>
     <ul>
-        <?php foreach ($searchResults as $result): ?>
-            <li><a href="playerProfil.php?id=<?php echo $result['id']?>"><?php echo htmlspecialchars($result['email']); ?></a></li>
-        <?php endforeach; ?>
+    <?php foreach ($searchResults as $result): ?>
+        <li><a href="playerProfil.php?id=<?php echo htmlspecialchars($result['id']); ?>"><?php echo htmlspecialchars($result['email']); ?></a> (<?php echo htmlspecialchars($result['username']); ?>)</li>
+    <?php endforeach; ?>
     </ul>
 <?php elseif (isset($searchResults)): ?>
     <p>Aucun joueur trouvé.</p>

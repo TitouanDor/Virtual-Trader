@@ -1,0 +1,39 @@
+Phase 1: Core Functionality
+
+*   Task 1: Enhanced Profile Search and Viewing
+    *   Modify `searchPlayerScript.php` to search by email *or* username.
+    *   Fix the redirect to `playerProfil.php` after search.
+    *   Ensure all the necessary data is displayed on `playerProfil.php`.
+*   Task 2: Leaderboard Accessibility
+    * Add a link to the leaderboard in every page.
+*   Task 3: Following Players:
+    * Fix the follow system.
+    * Add the button to follow a player on the player's profile page.
+    * Show the player you follow on your profile.
+
+Phase 2: Password Recovery
+
+*   Task 4: Password Recovery
+    *   Add the "Mot de passe oublié" button to `index.html`.
+    *   Create a new password recovery page (`passwordRecovery.php`).
+    *   Implement user verification (email or username).
+    *   Implement password update logic.
+
+Phase 3: Stock Market Overview
+
+*   Task 5: Stock Market Overview
+    *   Add the "Actions" button to `profil.php`.
+    *   Create the stock market overview page (`actionMarket.php`).
+    *   Display current prices.
+    *   Display historical prices (12 months).
+    *   Implement buy/sell functionality.
+    *   Implement search/filter for stocks.
+
+Phase 4: Profile Reset
+
+*   Task 6: Profile Reset
+    *   Add the reset button to `profil.php`.
+    *   Implement the reset logic:
+        *   Reset balance.
+        *   Reset portfolio.
+        *   Leave market and game date unchanged.

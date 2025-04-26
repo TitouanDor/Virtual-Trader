@@ -7,30 +7,31 @@ if (!isset($_SESSION['id'])) {
     exit();
 }
 
-if (!isset($_POST['username'])) {
-    $_SESSION['error'] = "Please enter a username to search.";
+$search = $_POST['search'];
+if (!isset($_POST['search'])) {
+    $_SESSION['error'] = "Please enter a username or an email to search";
     header('location: profil.php');
     exit();
 }
 
-$username = $_POST['username'];
 
 try {
     $bdd = new PDO('mysql:host=localhost;dbname=virtual_trader;charset=utf8', 'root', '');
     $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    $req = $bdd->prepare("SELECT id, username FROM joueur WHERE username = ?");
-    $req->execute([$username]);
+    $req = $bdd->prepare("SELECT id, username, email FROM joueur WHERE username = ? OR email = ?");
+    $req->execute([$search,$search]);
     $result = $req->fetch();
 
     if ($result) {
-        $_SESSION['search_result'] = $result;
+        $id = $result['id'];
+        header("location: playerProfil.php?id=$id");
+        exit();
     } else {
-        $_SESSION['error'] = "No user found with that username.";
+        $_SESSION['error'] = "No user found with that username or email.";
+        header('location: profil.php');
+        exit();
     }
-
-    header('location: profil.php');
-    exit();
 
 } catch (PDOException $e) {
     $_SESSION['error'] = "Database error: " . $e->getMessage();
