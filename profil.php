@@ -92,10 +92,16 @@ $investedActionsReq->execute([$_SESSION['id']]);
 $investedActions = $investedActionsReq->fetchAll();
 
 // Recherche de joueur
-if (isset($_SESSION['search_result'])) {
-    $searchResults = [$_SESSION['search_result']]; // Wrap the single result in an array
-    unset($_SESSION['search_result']); // Clear the search result
-    
+if (isset($_SESSION['search_result'])) {    
+    $searchResult = $_SESSION['search_result'];
+    $investedActionsOfPlayer = $bdd->prepare("SELECT actions.nom, portefeuille.quantite FROM portefeuille JOIN actions ON portefeuille.action_id = actions.id WHERE portefeuille.joueur_id = ?");// Récupération des actions investies
+    $investedActionsOfPlayer->execute([$searchResult["id"]]);
+    $investedActionsOfPlayer = $investedActionsOfPlayer->fetchAll();
+    unset($_SESSION['search_result']);
+}
+if(isset($_SESSION["error"])){
+    $error = $_SESSION["error"];
+    unset($_SESSION["error"]);
 }
 
 ?>
@@ -131,16 +137,20 @@ if (isset($_SESSION['search_result'])) {
         <input type="submit" value="Rechercher">
 </form>
 
-<?php if (isset($searchResults) && $searchResults): ?>
-    <h2>Search Results</h2>
+<?php if(isset($searchResult)):?>
+<p>Username: <?php echo $searchResult["username"] ?></p>
+<p>Email: <?php echo $searchResult["email"] ?></p>
+<p>Solde: <?php echo $searchResult["argent"] ?></p>
+<h2>Action of this user</h2>
+<?php if ($investedActionsOfPlayer): ?>
     <ul>
-    <?php foreach ($searchResults as $result): ?>
-        <li><a href="playerProfil.php?id=<?php echo htmlspecialchars($result['id']); ?>"><?php echo htmlspecialchars($result['email']); ?></a> (<?php echo htmlspecialchars($result['username']); ?>)</li>
-    <?php endforeach; ?>
+        <?php foreach ($investedActionsOfPlayer as $action): ?>
+                <li><?php echo htmlspecialchars($action['nom']); ?> (Quantité: <?php echo htmlspecialchars($action['quantite']); ?>)</li>
+        <?php endforeach; ?>
     </ul>
-<?php elseif (isset($searchResults)): ?>
-    <p>Aucun joueur trouvé.</p>
 <?php endif; ?>
+<?php elseif (isset($error)): echo "<p>".$error."</p>"; endif;?>
+
 <a href="changePassword.php">Changer de mot de passe</a>
 <br>
 <a href="logout.php">Déconnexion</a>

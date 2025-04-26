@@ -9,7 +9,7 @@ if (!isset($_SESSION['id'])) {
 
 $search = $_POST['search'];
 if (!isset($_POST['search'])) {
-    $_SESSION['error'] = "Please enter a username or an email to search";
+    $_SESSION['error'] = "Please enter a username or an email to search.";
     header('location: profil.php');
     exit();
 }
