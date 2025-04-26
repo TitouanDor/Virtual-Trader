@@ -6,7 +6,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
+            margin: 20px ;
             background-color: #f4f4f4;
         }
         .stock-container {
@@ -36,33 +36,21 @@
         }
     </style>
 </head>
-<body>
+<body >
 
 <?php
 
 session_start();
 if(!isset($_SESSION['id'])){
-    header("location: index.php");
+    header("location: index.php ");
 }
 // Database connection
-try {
-    $bdd = new PDO('mysql:host=localhost;dbname=virtual_trader;charset=utf8', 'root', '');
-    $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    echo "<p>Database connection error</p>";
-    exit();
-}
-
-// Check if stock ID is provided
-if (!isset($_GET['id'])) {
-    header('Location: marcher.php');
-    exit();
-}
+$bdd = new PDO('mysql:host=localhost;dbname=virtual_trader;charset=utf8', 'root', '');
+$bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 ?>
 <a href="index.php">Se deconnecter</a>
 <a href="marcher.php">marche</a>
 <?php
-
 
 
 
@@ -72,49 +60,31 @@ $stockId = $_GET['id'];
 $req = $bdd->prepare("SELECT nom, description, prix FROM actions WHERE id = ?");
 $req->execute([$stockId]);
 $stock = $req->fetch();
-
-// Check if stock exists
-if (!$stock) {
-    echo "<p>Action non trouvée</p>";
-    header('Location: marcher.php');
-    exit();
-}
-
 // Get price history
 $historyReq = $bdd->prepare("SELECT real_date, price FROM historique WHERE stock_id = ? ORDER BY real_date DESC");
 $historyReq->execute([$stockId]);
 $history = $historyReq->fetchAll();
-if ($history === false) {
-    echo "<p>Database error</p>";
-    exit();
-}
 
 $player_id = $_SESSION['id'];
 // Get player information
 $playerReq = $bdd->prepare("SELECT argent FROM joueur WHERE id = ?");
 $playerReq->execute([htmlspecialchars($player_id)]);
 $player = $playerReq->fetch();
-if ($player === false) {
-    echo "<p>Database error</p>";
-    exit();
-}
+
 ?>
 
-
-
-
-    <div class="stock-container">
+<div class="stock-container">
         <h1><?php echo htmlspecialchars($stock['nom']); ?></h1>
         <p><strong>Description:</strong> <?php echo htmlspecialchars($stock['description']); ?></p>
         <p><strong>Prix:</strong> <?php echo htmlspecialchars($stock['prix']); ?> €</p>
 
         <h2>Historique des prix</h2>
         <?php if ($history): ?>
-            <ul class="history-list">
-                <?php foreach ($history as $record): ?>
-                    <li><?php echo htmlspecialchars($record['real_date']); ?>: <?php echo htmlspecialchars($record['price']); ?> €</li>
-                <?php endforeach; ?>
-            </ul>
+        <ul class="history-list">
+            <?php foreach ($history as $record): ?>
+            <li><?php echo htmlspecialchars($record['real_date']); ?>: <?php echo htmlspecialchars($record['price']); ?> €</li>
+            <?php endforeach; ?>
+        </ul>
         <?php else: ?>
             <p>Aucun historique disponible pour cette action.</p>
         <?php endif; ?>
@@ -127,14 +97,16 @@ if ($player === false) {
             <input type="hidden" name="stock_id" value="<?php echo $stockId; ?>">
             <label for="quantity">Quantité:</label>
             <input type="number" id="quantity" name="quantity" value="0" min="0" required>
-            <br>
+            <br />
             <button type="submit" name="action" value="buy">Acheter</button>
             <button type="submit" name="action" value="sell">Vendre</button>
         </form>
     </div>
-    
-
-
+<div>
+</div>
 
 </body>
+    <?php if (!isset($_GET['id'])): header('Location: marcher.php'); endif; ?>
+
+
 </html>

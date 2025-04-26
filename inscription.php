@@ -1,23 +1,18 @@
 <?php
 session_start();
-
-if(isset($_SESSION['error'])){
-    echo($_SESSION['error'] . "<br>");
-    unset($_SESSION['error']);
-}
 ?>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Inscription VT</title>
+    <title>Inscription</title>
     <link rel="stylesheet" href="CSSFile\inscription.css">
 </head>
 <body>
 <div>
     <a href="index.php">
         <button>
-        Retour
-    </button>
+            Retour
+        </button>
     </a>
 </div>
     <div name="box_inscription" class="box_inscription">
@@ -49,7 +44,7 @@ if(isset($_SESSION['error'])){
 
             <div class="group-from">
             <label>
-                <input type="password" name="password" placeholder="mot de passe">
+                <input type="password" name="password" placeholder="Mot de passe">
             </label>
             </div>
 

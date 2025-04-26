@@ -5,31 +5,17 @@ if (!isset($_SESSION['id'])) {
     header('location: index.php');
     exit();
 }
-
-try {
     $bdd = new PDO('mysql:host=localhost;dbname=virtual_trader;charset=utf8', 'root', '');
-} catch (PDOException $e) {
-    session_start();
-    $_SESSION['error'] = "Database connection error: \n" . $e->getMessage();
-    header('location: index.php');
-    exit();
-}
-
-try {
-    $req = $bdd->prepare("SELECT j.username, j.argent + COALESCE(SUM(p.quantity * a.prix), 0) AS portfolio_value
+    $req = $bdd->prepare("SELECT j.username, j.argent + COALESCE(SUM(p.quantite * a.prix), 0) AS valeur_portefeuille
                           FROM joueur j
                           LEFT JOIN portefeuille p ON j.id = p.player_id
                           LEFT JOIN actions a ON p.stock_id = a.id
                           GROUP BY j.id
-                          ORDER BY portfolio_value DESC");
+                          ORDER BY valeur_portefeuille DESC");
     $req->execute();
-    $leaderboard = $req->fetchAll();
-} catch (PDOException $e) {
-    session_start();
-    $_SESSION['error'] = "Database error: \n" . $e->getMessage();
-    header('location: index.php');
-    exit();
-}
+$leaderboard = $req->fetchAll();
+
+
 ?>
 
 <!DOCTYPE html>
@@ -37,26 +23,26 @@ try {
 <head>
     <meta charset="UTF-8">
     <title>Leaderboard</title>
+    <a href="index.php">Retour à l'index</a>
 </head>
 <body>
 
-<a href="index.php">Back to index</a>
+<h1>Classement</h1>
 
-<h1>Leaderboard</h1>
 
 <?php if ($leaderboard): ?>
     <table>
         <thead>
             <tr>
-                <th>Username</th>
-                <th>Portfolio Value</th>
+                <th>Nom d'utilisateur</th>
+                <th>Valeur du portefeuille</th>
             </tr>
         </thead>
         <tbody>
             <?php foreach ($leaderboard as $player): ?>
                 <tr>
                     <td><?php echo htmlspecialchars($player['username']); ?></td>
-                    <td><?php echo htmlspecialchars($player['portfolio_value']); ?> €</td>
+                    <td><?php echo htmlspecialchars($player['valeur_portefeuille']); ?> €</td>
                 </tr>
             <?php endforeach; ?>
         </tbody>

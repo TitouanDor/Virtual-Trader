@@ -1,127 +1,109 @@
 <?php
 session_start();
-if (!isset($_SESSION['id'])) {
-    header("location: index.php");
-    exit();
-}
-$player_id = $_SESSION['id'];
-// Check if stock ID, quantity and action are provided
+
+if (!isset($_SESSION['id'])) { header("location: index.php"); exit(); }
+
+$idJoueur = $_SESSION['id'];
+
+// Vérifie si l'ID de l'action, la quantité et l'action sont fournis
 if (!isset($_POST['stock_id']) || !isset($_POST['quantity']) || !isset($_POST['action'])) {
-    $_SESSION['error'] = "Invalid data provided. Please provide the stock id, quantity, and the action you want to do.";
-    header('Location: marcher.php');
-    exit();
+    header('Location: marcher.php'); exit();
 }
 
-$stockId = $_POST['stock_id'];
-$quantity = $_POST['quantity'];
+$idAction = $_POST['stock_id'];
+$quantite = $_POST['quantity'];
 $action = $_POST['action'];
 
-try {
-    // Database connection
-    $bdd = new PDO('mysql:host=localhost;dbname=virtual_trader;charset=utf8', 'root', '');
-    $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+// Connexion à la base de données
+$bdd = new PDO('mysql:host=localhost;dbname=virtual_trader;charset=utf8', 'root', '');
+$bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // Get stock information
-    $req = $bdd->prepare("SELECT nom, prix FROM actions WHERE id = ?");
-    $req->execute([$stockId]);
-    $stock = $req->fetch();
+// Récupère les informations de l'action
+$reqAction = $bdd->prepare("SELECT nom, prix FROM actions WHERE id = ?");
+$reqAction->execute([$idAction]);
+$action = $reqAction->fetch();
 
-    if (!$stock) {
-        $_SESSION['error'] = "The stock you are trying to buy or sell does not exist.";
-        header("Location: marcher.php");
-        exit();
-    }
-    //check if the player has lost
-    $portfolioValue = 0;
-    $portfolioReq = $bdd->prepare("SELECT p.quantity, a.prix FROM portefeuille p JOIN actions a ON p.stock_id = a.id WHERE p.player_id = ?");
-    $portfolioReq->execute([$player_id]);
-    $portfolio = $portfolioReq->fetchAll();
-    foreach ($portfolio as $stockInPortfolio) {
-      $portfolioValue += $stockInPortfolio['quantity'] * $stockInPortfolio['prix'];
-    }
-    // Get player information
-    $playerReq = $bdd->prepare("SELECT argent FROM joueur WHERE id = ?");
-    $playerReq->execute([$player_id]);
-    $player = $playerReq->fetch();
+if (!$action) { header("Location: marcher.php"); exit(); }
 
-    if (!$player) {
-        $_SESSION['error'] = "The player trying to buy or sell does not exist.";
-        header("Location: marcher.php");
-        exit();
-    }
-    $portfolioValue += $player['argent'];
-    if ($portfolioValue < 1000) {
-        $_SESSION['error'] = "Player not found.";
-        header("Location: marcher.php");
-        exit();
-    }
-
-    $stockPrice = $stock['prix'];
-    $playerMoney = $player['argent'];
-
-    if ($action == 'buy') {
-        $totalCost = $stockPrice * $quantity;
-        if ($playerMoney < $totalCost) {
-            $_SESSION['error'] = "Insufficient funds to buy this stock. You need " .($totalCost - $playerMoney). "€ more.";
-            header("Location: pageAction.php?id=" . $stockId);
-            exit();
-        }
-
-        // Insert the purchase in the 'portefeuille' table or update it if it already exists
-        $portfolioCheckReq = $bdd->prepare("SELECT quantity FROM portefeuille WHERE player_id = ? AND stock_id = ?");
-        $portfolioCheckReq->execute([$player_id, $stockId]);
-        $existingPortfolio = $portfolioCheckReq->fetch();
-        if($existingPortfolio){
-          $newQuantity = $existingPortfolio['quantity'] + $quantity;
-          $updatePortfolioReq = $bdd->prepare("UPDATE portefeuille SET quantity = ? WHERE player_id = ? AND stock_id = ?");
-          $updatePortfolioReq->execute([$newQuantity, $player_id, $stockId]);
-        }else{
-          $insertPortfolioReq = $bdd->prepare("INSERT INTO portefeuille (player_id, stock_id, quantity, purchase_price, purchase_date) VALUES (?, ?, ?, ?, NOW())");
-          $insertPortfolioReq->execute([$player_id, $stockId, $quantity, $stockPrice]);
-        }
-
-        // Update the player's money
-        $newMoney = $playerMoney - $totalCost;
-        $updatePlayerReq = $bdd->prepare("UPDATE joueur SET argent = ? WHERE id = ?");
-        $updatePlayerReq->execute([$newMoney, $player_id]);
-
-        // Insert the transaction in the 'historique' table
-        $insertHistoryReq = $bdd->prepare("INSERT INTO historique (stock_id, player_id, price, nature, real_date) VALUES (?, ?, ?, 'buy', NOW())");
-        $insertHistoryReq->execute([$stockId, $player_id, $stockPrice]);
-    } elseif ($action == 'sell') {
-        // Get the number of stocks the user possesses
-        $portfolioReq = $bdd->prepare("SELECT quantity FROM portefeuille WHERE player_id = ? AND stock_id = ?");
-        $portfolioReq->execute([$player_id, $stockId]);
-        $portfolio = $portfolioReq->fetch();
-
-        if (!$portfolio || $portfolio['quantity'] < $quantity) {
-            $_SESSION['error'] = "Insufficient stocks to sell. You only have " .($portfolio ? $portfolio['quantity'] : 0). " stocks to sell.";
-            header("Location: pageAction.php?id=" . $stockId);
-            exit();
-        }
-
-        // Update the number of stocks or delete it from portefeuille table
-        $newQuantity = $portfolio['quantity'] - $quantity;
-        if ($newQuantity == 0) {
-            $deletePortfolioReq = $bdd->prepare("DELETE FROM portefeuille WHERE player_id = ? AND stock_id = ?");
-            $deletePortfolioReq->execute([$player_id, $stockId]);
-        } else {
-            $updatePortfolioReq = $bdd->prepare("UPDATE portefeuille SET quantity = ? WHERE player_id = ? AND stock_id = ?");
-            $updatePortfolioReq->execute([$newQuantity, $player_id, $stockId]);
-        }
-
-        // Update the player's money
-        $newMoney = $playerMoney + ($stockPrice * $quantity);
-        $updatePlayerReq = $bdd->prepare("UPDATE joueur SET argent = ? WHERE id = ?");
-        $updatePlayerReq->execute([$newMoney, $player_id]);
-
-        // Insert the transaction in the 'historique' table
-        $insertHistoryReq = $bdd->prepare("INSERT INTO historique (stock_id, player_id, price, nature, real_date) VALUES (?, ?, ?, 'sell', NOW())");
-        $insertHistoryReq->execute([$stockId, $player_id, $stockPrice]);
-    }
-    header("Location: pageAction.php?id=" . $stockId);
-} catch (PDOException $e) {
-    $_SESSION['error'] = "Database error.";
-    header("Location: pageAction.php?id=" . $stockId);
+// Vérifier si le joueur a perdu
+$valeurPortefeuille = 0;
+$reqPortefeuille = $bdd->prepare("SELECT p.quantity, a.prix FROM portefeuille p JOIN actions a ON p.stock_id = a.id WHERE p.player_id = ?");
+$reqPortefeuille->execute([$idJoueur]);
+$portefeuille = $reqPortefeuille->fetchAll();
+foreach ($portefeuille as $actionEnPortefeuille) {
+  $valeurPortefeuille += $actionEnPortefeuille['quantity'] * $actionEnPortefeuille['prix'];
 }
+
+// Récupère les informations du joueur
+$reqJoueur = $bdd->prepare("SELECT argent FROM joueur WHERE id = ?");
+$reqJoueur->execute([$idJoueur]);
+$joueur = $reqJoueur->fetch();
+
+if (!$joueur) { header("Location: marcher.php"); exit(); }
+
+$valeurPortefeuille += $joueur['argent'];
+if ($valeurPortefeuille < 1000) { header("Location: marcher.php"); exit(); }
+
+$prixAction = $action['prix'];
+$argentJoueur = $joueur['argent'];
+
+if ($action == 'buy') {
+    $coutTotal = $prixAction * $quantite;
+    if ($argentJoueur < $coutTotal) {
+        header("Location: pageAction.php?id=" . $idAction);
+        exit();
+    }
+
+    // Insère l'achat dans la table 'portefeuille' ou le met à jour si elle existe déjà
+    $reqVerifPortefeuille = $bdd->prepare("SELECT quantity FROM portefeuille WHERE player_id = ? AND stock_id = ?");
+    $reqVerifPortefeuille->execute([$idJoueur, $idAction]);
+    $portefeuilleExistant = $reqVerifPortefeuille->fetch();
+    if($portefeuilleExistant){
+      $nouvelleQuantite = $portefeuilleExistant['quantity'] + $quantite;
+      $reqUpdatePortefeuille = $bdd->prepare("UPDATE portefeuille SET quantity = ? WHERE player_id = ? AND stock_id = ?");
+      $reqUpdatePortefeuille->execute([$nouvelleQuantite, $idJoueur, $idAction]);
+    }else{
+      $reqInsertPortefeuille = $bdd->prepare("INSERT INTO portefeuille (player_id, stock_id, quantity, purchase_price, purchase_date) VALUES (?, ?, ?, ?, NOW())");
+      $reqInsertPortefeuille->execute([$idJoueur, $idAction, $quantite, $prixAction]);
+    }
+
+    // Met à jour l'argent du joueur
+    $nouvelArgent = $argentJoueur - $coutTotal;
+    $reqUpdateJoueur = $bdd->prepare("UPDATE joueur SET argent = ? WHERE id = ?");
+    $reqUpdateJoueur->execute([$nouvelArgent, $idJoueur]);
+
+    // Insère la transaction dans la table 'historique'
+    $reqInsertHistorique = $bdd->prepare("INSERT INTO historique (stock_id, player_id, price, nature, real_date) VALUES (?, ?, ?, 'buy', NOW())");
+    $reqInsertHistorique->execute([$idAction, $idJoueur, $prixAction]);
+} elseif ($action == 'sell') {
+    // Récupère le nombre d'actions que l'utilisateur possède
+    $reqPortefeuille = $bdd->prepare("SELECT quantity FROM portefeuille WHERE player_id = ? AND stock_id = ?");
+    $reqPortefeuille->execute([$idJoueur, $idAction]);
+    $portefeuille = $reqPortefeuille->fetch();
+
+    if (!$portefeuille || $portefeuille['quantity'] < $quantite) {
+        header("Location: pageAction.php?id=" . $idAction);
+        exit();
+    }
+
+    // Met à jour le nombre d'actions ou le supprime de la table portefeuille
+    $nouvelleQuantite = $portefeuille['quantity'] - $quantite;
+    if ($nouvelleQuantite == 0) {
+        $reqDeletePortefeuille = $bdd->prepare("DELETE FROM portefeuille WHERE player_id = ? AND stock_id = ?");
+        $reqDeletePortefeuille->execute([$idJoueur, $idAction]);
+    } else {
+        $reqUpdatePortefeuille = $bdd->prepare("UPDATE portefeuille SET quantity = ? WHERE player_id = ? AND stock_id = ?");
+        $reqUpdatePortefeuille->execute([$nouvelleQuantite, $idJoueur, $idAction]);
+    }
+
+    // Met à jour l'argent du joueur
+    $nouvelArgent = $argentJoueur + ($prixAction * $quantite);
+    $reqUpdateJoueur = $bdd->prepare("UPDATE joueur SET argent = ? WHERE id = ?");
+    $reqUpdateJoueur->execute([$nouvelArgent, $idJoueur]);
+
+    // Insère la transaction dans la table 'historique'
+    $reqInsertHistorique = $bdd->prepare("INSERT INTO historique (stock_id, player_id, price, nature, real_date) VALUES (?, ?, ?, 'sell', NOW())");
+    $reqInsertHistorique->execute([$idAction, $idJoueur, $prixAction]);
+}
+header("Location: pageAction.php?id=" . $idAction);
 ?>

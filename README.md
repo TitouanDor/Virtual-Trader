@@ -1,16 +1,16 @@
-# Virtual-Trader
+# Virtual-Trader (Simulateur Boursier)
 
-## Description
+## Description du Projet
 
-Virtual-Trader is a web application that simulates a virtual stock market. Users can create accounts, buy and sell virtual stocks, track their portfolio performance, and compete with other players. The game progresses in pseudo-real-time, with stock prices and dividends updating periodically.
+Virtual-Trader est une application web qui simule un marché boursier virtuel. Les utilisateurs peuvent créer des comptes, acheter et vendre des actions virtuelles, suivre les performances de leur portefeuille et rivaliser avec d'autres joueurs. Le jeu progresse en pseudo-temps réel, avec des mises à jour périodiques des prix des actions et des dividendes.
 
-## Installation
+## Installation et Configuration
 
-1.  Set up a web server with PHP support and MySQL.
-2.  Create a MySQL database named `virtual_trader`.
-3.  Import the `database-schema.sql` file into the database.
-4.  Copy all the project files to your web server directory.
+1.  Mettre en place un serveur web avec support PHP et MySQL.
+2.  Créer une base de données MySQL nommée `virtual_trader`.
+3.  Importer le fichier `database-schema.sql` dans la base de données.
+4.  Copier tous les fichiers du projet dans le répertoire de votre serveur web.
 
-## Running the Application
+## Lancer l'Application
 
-1. Access the application through your web browser by visiting the URL where you uploaded the files (e.g., `http://localhost/Virtual-Trader/index.html`).
+1. Accéder à l'application via votre navigateur web en visitant l'URL où vous avez téléchargé les fichiers (ex: `http://localhost/Virtual-Trader/index.php`).

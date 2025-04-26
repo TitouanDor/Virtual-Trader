@@ -1,13 +1,13 @@
 <?php
 session_start();
 
-// Check if the user is logged in
+// Vérification si l'utilisateur est connecté
 if (!isset($_SESSION['id'])) {
-    header('location: index.php');
+    header('Location: index.php');
     exit();
 }
 
-// Database connection
+// Connexion à la base de données
 $dbHost = 'localhost';
 $dbName = 'virtual_trader';
 $dbUser = 'root';
@@ -15,18 +15,10 @@ $dbPass = '';
 $bdd = new PDO("mysql:host=$dbHost;dbname=$dbName;charset=utf8", $dbUser, $dbPass);
 $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-// Initialize error message
-$errorMessage = "";
 
-// Check if the user has lost the game
-$req = $bdd->prepare("SELECT j.id FROM joueur j WHERE j.id = ? AND j.id NOT IN (SELECT p.player_id FROM portefeuille p) AND j.argent < 1000");
-$req->execute([$_SESSION['id']]);
-if ($req->fetch()) {
-    $errorMessage = "You have lost the game!";
-}
+
 // Get the current game state and update if necessary
-if (empty($errorMessage)) {
-    $gameStateReq = $bdd->prepare("SELECT * FROM game_state");
+$gameStateReq = $bdd->prepare("SELECT * FROM game_state");
     $gameStateReq->execute();
     $gameState = $gameStateReq->fetch();
     if ($gameState) {
@@ -34,12 +26,12 @@ if (empty($errorMessage)) {
         $currentTime = new DateTime();
 
         // Check if the game has to be updated
-        if ($currentTime->diff($lastUpdate)->i >= 1) {
-            // Update the date
+         if ($currentTime->diff($lastUpdate)->i >= 1) {
+           
             $currentMonth = $gameState['current_month'];
-            $currentYear = $gameState['current_year'];
-            $currentMonth++;
-            if ($currentMonth > 12) {
+           $currentYear = $gameState['current_year'];
+           $currentMonth++;
+           if ($currentMonth > 12) {
                 $currentMonth = 1;
                 $currentYear++;
             }
@@ -47,22 +39,22 @@ if (empty($errorMessage)) {
             $updateDateReq = $bdd->prepare("UPDATE game_state SET current_month = ?, current_year = ?, last_update = ?");
             $updateDateReq->execute([$currentMonth, $currentYear, $currentTime->format('Y-m-d H:i:s')]);
             //give dividends
-            $dividendReq = $bdd->prepare("SELECT j.id, j.argent, a.dividende FROM joueur j JOIN portefeuille p ON j.id = p.player_id JOIN actions a ON p.stock_id = a.id WHERE a.date_dividende = ?");
-            $dividendReq->execute([$currentMonth]);
-            $players = $dividendReq->fetchAll();
-            foreach($players as $player){
-                $new_money = floatval($player['argent']) + floatval($player['dividende']);
-                $updateMoney = $bdd->prepare("UPDATE joueur SET argent = ? WHERE id = ?");
-                $updateMoney->execute([$new_money, $player['id']]);
-            }
-            // Update the price of stocks
-            $stocksReq = $bdd->prepare("SELECT id, prix FROM actions");
-            $stocksReq->execute();
-            $stocks = $stocksReq->fetchAll();
-            foreach ($stocks as $stock) {
-                $lastMonth = $currentMonth == 1 ? 12 : $currentMonth - 1;
-                $lastYear = $currentMonth == 1 ? $currentYear - 1 : $currentYear;
-
+           $dividendReq = $bdd->prepare("SELECT j.id, j.argent, a.dividende FROM joueur j JOIN portefeuille p ON j.id = p.player_id JOIN actions a ON p.stock_id = a.id WHERE a.date_dividende = ?");
+           $dividendReq->execute([$currentMonth]);
+           $players = $dividendReq->fetchAll();
+           foreach($players as $player){
+               $new_money = floatval($player['argent']) + floatval($player['dividende']);
+               $updateMoney = $bdd->prepare("UPDATE joueur SET argent = ? WHERE id = ?");
+               $updateMoney->execute([$new_money, $player['id']]);
+           }
+           // Update the price of stocks
+           $stocksReq = $bdd->prepare("SELECT id, prix FROM actions");
+           $stocksReq->execute();
+           $stocks = $stocksReq->fetchAll();
+           foreach ($stocks as $stock) {
+               $lastMonth = $currentMonth == 1 ? 12 : $currentMonth - 1;
+               $lastYear = $currentMonth == 1 ? $currentYear - 1 : $currentYear;
+           
                 // Check if we have the last price
                 $lastPriceExistReq = $bdd->prepare("SELECT COUNT(*) AS count FROM cours_marche WHERE stock_id = ? AND game_month = ? AND game_year = ?");
                 $lastPriceExistReq->execute([$stock['id'], $lastMonth, $lastYear]);
@@ -88,68 +80,57 @@ if (empty($errorMessage)) {
                 $newPriceReq->execute([$newPrice, $stock['id']]);
                 $addCoursReq = $bdd->prepare("INSERT INTO cours_marche (stock_id, game_month, game_year, valeur_action) VALUES (?, ?, ?, ?)");
                 $addCoursReq->execute([$stock['id'], $currentMonth, $currentYear, $newPrice]);
-            }
-        }
+           }
+        }        
     }
-}
 
-// Get user's information
-$userReq = $bdd->prepare("SELECT nom, prenom, email, argent FROM joueur WHERE id = ?");
+$userReq = $bdd->prepare("SELECT nom, prenom, email, argent FROM joueur WHERE id = ?"); // Récupération des informations de l'utilisateur
 $userReq->execute([$_SESSION['id']]);
 $user = $userReq->fetch();
 
-// Get user's invested actions
-$investedActionsReq = $bdd->prepare("SELECT a.nom, p.quantite FROM portefeuille p JOIN actions a ON p.stock_id = a.id WHERE p.player_id = ?");
+$investedActionsReq = $bdd->prepare("SELECT a.nom, p.quantite FROM portefeuille p JOIN actions a ON p.stock_id = a.id WHERE p.player_id = ?");// Récupération des actions investies
 $investedActionsReq->execute([$_SESSION['id']]);
 $investedActions = $investedActionsReq->fetchAll();
 
-// Handle player search
+// Recherche de joueur
 if (isset($_GET['search']) && !empty($_GET['search'])) {
     $search = htmlspecialchars($_GET['search']);
     $searchReq = $bdd->prepare("SELECT id, nom, prenom, email FROM joueur WHERE email LIKE ?");
     $searchReq->execute(["%" . $search . "%"]);
     $searchResults = $searchReq->fetchAll();
 }
-if (isset($_SESSION['success'])) {
-    echo "<p>" . str_replace("\n", "<br>", $_SESSION['success']) . "</p>";
-    unset($_SESSION['success']);
-}
 
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile</title>
+    <title>Mon profil</title>
 </head>
 <body>
-<h1>Welcome to your profile</h1>
-
-<?php if (!empty($errorMessage)): ?>
-    <p><?php echo $errorMessage; ?></p>
-<?php endif; ?>
+    <h1>Bienvenue sur votre profil</h1>
 
 <?php if ($user): ?>
-    <p>Name: <?php echo htmlspecialchars($user['nom']); ?></p>
-    <p>Surname: <?php echo htmlspecialchars($user['prenom']); ?></p>
-    <p>Username: <?php echo htmlspecialchars($user['email']); ?></p>
-    <p>Balance: <?php echo htmlspecialchars($user['argent']); ?></p>
+        <p>Nom: <?php echo htmlspecialchars($user['nom']); ?></p>
+        <p>Prénom: <?php echo htmlspecialchars($user['prenom']); ?></p>
+        <p>Nom d'utilisateur: <?php echo htmlspecialchars($user['email']); ?></p>
+        <p>Solde: <?php echo htmlspecialchars($user['argent']); ?></p>
 <?php endif; ?>
-<h2>Your Actions</h2>
+        <h2>Vos Actions</h2>
 <?php if ($investedActions): ?>
     <ul>
         <?php foreach ($investedActions as $action): ?>
-            <li><?php echo htmlspecialchars($action['nom']); ?> (Quantity: <?php echo htmlspecialchars($action['quantite']); ?>)</li>
+                <li><?php echo htmlspecialchars($action['nom']); ?> (Quantité: <?php echo htmlspecialchars($action['quantite']); ?>)</li>
         <?php endforeach; ?>
     </ul>
 <?php else: ?>
-    <p>You have not invested in any actions yet.</p>
+        <p>Vous n'avez pas encore investi dans des actions.</p>
 <?php endif; ?>
-<h2>Search for players</h2>
+    <h2>Rechercher des joueurs</h2>
 <form action="profil.php" method="get">
-    <input type="text" name="search" placeholder="Search by email">
-    <input type="submit" value="Search">
+        <input type="text" name="search" placeholder="Rechercher par e-mail">
+        <input type="submit" value="Rechercher">
 </form>
 
 <?php if (isset($searchResults) && $searchResults): ?>
@@ -160,11 +141,11 @@ if (isset($_SESSION['success'])) {
         <?php endforeach; ?>
     </ul>
 <?php elseif (isset($searchResults)): ?>
-    <p>No players found.</p>
+    <p>Aucun joueur trouvé.</p>
 <?php endif; ?>
-<a href="changePassword.php">Change password</a>
+<a href="changePassword.php">Changer de mot de passe</a>
 <br>
-<a href="logout.php">Logout</a>
+<a href="logout.php">Déconnexion</a>
 </body>
 </html>
 
