@@ -29,11 +29,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Check if the passwords match
         if ($new_password === $confirm_password) {
             // Hash the new password
-            $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
+            $mdp = password_hash($new_password, PASSWORD_DEFAULT);
 
             // Update the password in the database
-            $update_req = $bdd->prepare("UPDATE joueur SET password = ? WHERE id = ?");
-            $update_req->execute([$hashed_password, $user['id']]);
+            $update_req = $bdd->prepare("UPDATE joueur SET mdp = ? WHERE id = ?");
+            $update_req->execute([$mdp, $user['id']]);
 
             // Redirect to index.html with success message
             $_SESSION['success'] = "Password updated successfully.";
