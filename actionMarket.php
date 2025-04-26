@@ -47,7 +47,7 @@ foreach ($actions as &$action) {
     <ul>
         <?php foreach ($actions as $action): ?>
             <li>
-                <form action="buySellScript.php" method="POST">
+                <form action="buySellScript.php" method="POST" name="form_<?php echo $action['id']?>">
                     <h2><?php echo htmlspecialchars($action['nom']); ?></h2>
                     <p><?php echo htmlspecialchars($action['description']); ?></p>
                     <p>Prix actuel: <?php echo htmlspecialchars($action['prix']); ?></p>
