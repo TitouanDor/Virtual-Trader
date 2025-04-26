@@ -1,7 +1,6 @@
 <?php
-session_start();
+
 $currentTime = new DateTime();
-// Check if the user is logged in
 if (!isset($_SESSION['id'])) {
     header('location: index.html');
     exit();

@@ -1,6 +1,5 @@
 <?php
 session_start();
-
 // Vérification si l'utilisateur est connecté
 if (!isset($_SESSION['id'])) {
     header('Location: index.html');
@@ -146,81 +145,5 @@ if (isset($_GET['search']) && !empty($_GET['search'])) {
 <a href="changePassword.php">Changer de mot de passe</a>
 <br>
 <a href="logout.php">Déconnexion</a>
-</body>
-</html>
-
-playerProfil.php
-
-php
-<?php
-session_start();
-
-// Check if the user is logged in
-if (!isset($_SESSION['id'])) {
-    header('location: index.html');
-    exit();
-}
-
-// Database connection
-$dbHost = 'localhost';
-$dbName = 'virtual_trader';
-$dbUser = 'root';
-$dbPass = '';
-$bdd = new PDO("mysql:host=$dbHost;dbname=$dbName;charset=utf8", $dbUser, $dbPass);
-$bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-// Check if player ID is provided
-if (!isset($_GET['id']) || empty($_GET['id'])) {
-    header('Location: profil.php');
-    exit();
-}
-
-$playerId = htmlspecialchars($_GET['id']);
-
-// Get player's information
-$playerReq = $bdd->prepare("SELECT nom, prenom, email, argent FROM joueur WHERE id = ?");
-$playerReq->execute([$playerId]);
-$player = $playerReq->fetch();
-
-if (!$player) {
-    header('Location: profil.php');
-    exit();
-}
-
-// Get player's history
-$historyReq = $bdd->prepare("SELECT historique.*, actions.nom AS action_name FROM historique JOIN actions ON historique.action_id = actions.id WHERE historique.joueur_id = ? ORDER BY historique.real_date DESC");
-$historyReq->execute([$playerId]);
-$history = $historyReq->fetchAll();
-if (isset($_SESSION['success'])) {
-    echo "<p>" . str_replace("\n", "<br>", $_SESSION['success']) . "</p>";
-    unset($_SESSION['success']);
-}
-?>
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Player Profile</title>
-</head>
-<body>
-<h1><?php echo htmlspecialchars($player['email']); ?>'s Profile</h1>
-
-<p>Name: <?php echo htmlspecialchars($player['nom']); ?></p>
-<p>Surname: <?php echo htmlspecialchars($player['prenom']); ?></p>
-<p>Balance: <?php echo htmlspecialchars($player['argent']); ?></p>
-
-<h2>Last Actions</h2>
-<?php if ($history): ?>
-    <ul>
-        <?php foreach ($history as $record): ?>
-            <li><?php echo htmlspecialchars($record['real_date']); ?>: <?php echo htmlspecialchars($record['nature']); ?> of <?php echo htmlspecialchars($record['action_name']); ?> (price : <?php echo htmlspecialchars($record['prix']); ?>)</li>
-        <?php endforeach; ?>
-    </ul>
-<?php else: ?>
-    <p>No actions found for this player.</p>
-<?php endif; ?>
-<a href="profil.php">Return to my profil</a>
 </body>
 </html>
