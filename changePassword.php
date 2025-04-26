@@ -3,7 +3,7 @@ session_start();
 
 // Check if the user is logged in
 if (!isset($_SESSION['id'])) {
-    header('location: index.php');
+    header('location: index.html');
     exit();
 }
 // Database connection

@@ -2,7 +2,7 @@
 session_start(); 
 
 if (!isset($_SESSION['id'])) {
-    header('location: index.php');
+    header('location: index.html');
     exit();
 }
     $bdd = new PDO('mysql:host=localhost;dbname=virtual_trader;charset=utf8', 'root', '');
@@ -23,7 +23,7 @@ $leaderboard = $req->fetchAll();
 <head>
     <meta charset="UTF-8">
     <title>Leaderboard</title>
-    <a href="index.php">Retour à l'index</a>
+    <a href="index.html">Retour à l'index</a>
 </head>
 <body>
 

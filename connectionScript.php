@@ -27,11 +27,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") { // Si la requête est de type POST
             header('Location: profil.php'); // Rediriger l'utilisateur vers profil.php
             exit(); // Arrêter l'exécution du script
         } else {
-            header('Location: index.php');
+            header('Location: index.html');
             exit();
         }
     } else {
-        header('Location: index.php');
+        header('Location: index.html');
         exit();
     }
 } 

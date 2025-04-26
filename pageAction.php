@@ -42,13 +42,13 @@
 
 session_start();
 if(!isset($_SESSION['id'])){
-    header("location: index.php ");
+    header("location: index.html ");
 }
 // Database connection
 $bdd = new PDO('mysql:host=localhost;dbname=virtual_trader;charset=utf8', 'root', '');
 $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 ?>
-<a href="index.php">Se deconnecter</a>
+<a href="index.html">Se deconnecter</a>
 <a href="marcher.php">marche</a>
 <?php
 

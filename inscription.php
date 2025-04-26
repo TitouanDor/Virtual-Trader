@@ -9,7 +9,7 @@ session_start();
 </head>
 <body>
 <div>
-    <a href="index.php">
+    <a href="index.html">
         <button>
             Retour
         </button>

@@ -3,7 +3,7 @@ session_start();
 
 // Vérification si l'utilisateur est connecté
 if (!isset($_SESSION['id'])) {
-    header('Location: index.php');
+    header('Location: index.html');
     exit();
 }
 
@@ -27,7 +27,7 @@ $gameStateReq = $bdd->prepare("SELECT * FROM game_state");
 
         // Check if the game has to be updated
          if ($currentTime->diff($lastUpdate)->i >= 1) {
-           
+
             $currentMonth = $gameState['current_month'];
            $currentYear = $gameState['current_year'];
            $currentMonth++;
@@ -157,7 +157,7 @@ session_start();
 
 // Check if the user is logged in
 if (!isset($_SESSION['id'])) {
-    header('location: index.php');
+    header('location: index.html');
     exit();
 }
 
