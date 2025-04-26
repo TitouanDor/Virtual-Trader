@@ -21,26 +21,41 @@ try {
     die("Database error: " . $e->getMessage());
 }
 
-// Get all actions
+// Fetch all actions
 $actionsReq = $bdd->prepare("SELECT id, nom, description, prix FROM actions");
 $actionsReq->execute();
 $actions = $actionsReq->fetchAll();
+
+// Fetch historical prices for each action
+foreach ($actions as &$action) {
+    $actionId = $action['id'];
+    $historicalPricesReq = $bdd->prepare("SELECT game_month, game_year, valeur_action FROM cours_marche WHERE action_id = ? ORDER BY game_year DESC, game_month DESC LIMIT 12");
+    $historicalPricesReq->execute([$actionId]);
+    $historicalPrices = $historicalPricesReq->fetchAll();
+    $action['historical_prices'] = $historicalPrices;
+}
 ?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stock Market</title>
+    <title>Marché</title>
 </head>
 <body>
-    <h1>Stock Market</h1>
+    <h1>Marché</h1>
     <ul>
         <?php foreach ($actions as $action): ?>
             <li>
                 <h2><?php echo htmlspecialchars($action['nom']); ?></h2>
                 <p><?php echo htmlspecialchars($action['description']); ?></p>
-                <p>Current price: <?php echo htmlspecialchars($action['prix']); ?></p>
+                <p>Prix actuel: <?php echo htmlspecialchars($action['prix']); ?></p>
+                <h3>Prix Historiques</h3>
+                <ul>
+                  <?php foreach ($action['historical_prices'] as $historicalPrice): ?>
+                    <li><?php echo htmlspecialchars($historicalPrice['game_month']."/".$historicalPrice['game_year'].": ".$historicalPrice['valeur_action']); ?></li>
+                  <?php endforeach; ?>
+                </ul>
             </li>
         <?php endforeach; ?>
     </ul>
