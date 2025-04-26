@@ -83,6 +83,9 @@ if (isset($_SESSION['success'])) {
     <input type="submit" value="Change Password">
 </form>
 <br>
-<a href="profil.php">Return to my profil</a>
+<a href="profil.php">Return to my profil</a><br>
+<a href="leaderboard.php">Leaderboard</a>
+
+
 </body>
 </html>

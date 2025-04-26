@@ -60,6 +60,9 @@ $history = $historyReq->fetchAll();
     <p>Aucune action trouvée pour ce joueur.</p>
 <?php endif; ?>
 <a href="profil.php">Retourner à mon profil</a>
+<br>
+<a href="leaderboard.php">Leaderboard</a>
+
 </body>
 </html>
 

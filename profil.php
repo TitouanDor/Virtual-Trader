@@ -155,5 +155,6 @@ if(isset($_SESSION["error"])){
 <a href="changePassword.php">Changer de mot de passe</a>
 <br>
 <a href="logout.php">Déconnexion</a>
+<br><a href="leaderboard.php">See the Leaderboard</a>
 </body>
 </html>
