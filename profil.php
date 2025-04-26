@@ -186,9 +186,11 @@ if(isset($_SESSION["error"])){
 <?php else: ?>
     <p>You are not following anyone.</p>
 <?php endif; ?>
-    <a href="passwordRecovery.php">Change Password</a>
+    <a href="passwordRecovery.php">Change Password</a>    
     <br>
-    <a href="leaderboard.php?from=profil">Classement</a>
+    <a href="actionMarket.php">Marché</a>
+    <br>
+    <a href="leaderboard.php?from=profil">Classement</a>    
     <br>
     <a href="logout.php">Déconnexion</a>
 </body>
