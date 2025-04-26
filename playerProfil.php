@@ -1,6 +1,7 @@
 <?php
+session_start();
 
-$currentTime = new DateTime();
+
 
 
 // Database connection
@@ -12,6 +13,7 @@ $bdd = new PDO("mysql:host=$dbHost;dbname=$dbName;charset=utf8", $dbUser, $dbPas
 $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 // Check if player ID is provided
+
 if (!isset($_GET['id']) || empty($_GET['id'])) {
     header('Location: profil.php');
     exit();
@@ -19,13 +21,33 @@ if (!isset($_GET['id']) || empty($_GET['id'])) {
 
 $playerId = htmlspecialchars($_GET['id']);
 
-// Récupérer les informations du joueur
+// Get player information
 $playerReq = $bdd->prepare("SELECT nom, prenom, username, argent FROM joueur WHERE id = ?");
 $playerReq->execute([$playerId]);
 $player = $playerReq->fetch();
 if (!$player) {
     header('Location: profil.php');
     exit();
+}
+
+if(!isset($_SESSION["id"])){
+    header("Location: index.html");
+    exit();
+}
+
+// Check if the user is already following the player
+$userId = $_SESSION['id'];
+$checkFollowReq = $bdd->prepare("SELECT * FROM followers WHERE user_id = ? AND followed_user_id = ?");
+$checkFollowReq->execute([$userId, $playerId]);
+$isFollowing = $checkFollowReq->fetch();
+
+$followButtonValue = "Follow";
+
+if ($isFollowing){
+    $followButtonValue = "Unfollow";
+}
+if ($userId == $playerId){
+    $followButtonValue = "It's you";
 }
 
 
@@ -43,11 +65,22 @@ $history = $historyReq->fetchAll();
     <title>Profil du joueur</title>
 </head>
 <body>
-<h1>Profil de <?php echo htmlspecialchars($player['username']); ?></h1>
+<h1>Profil de <?php echo htmlspecialchars($player['username']);
+ if($followButtonValue == "It's you"){
+    echo " (it's you)";
+ }?></h1>
 
 <p>Nom: <?php echo htmlspecialchars($player['nom']); ?></p>
 <p>Prénom: <?php echo htmlspecialchars($player['prenom']); ?></p>
 <p>Solde: <?php echo htmlspecialchars($player['argent']); ?></p>
+<?php if ($followButtonValue != "It's you"): ?>
+<form method="POST" action="followScript.php">
+    <input type="hidden" name="followed_user_id" value="<?php echo $playerId; ?>">
+    <input type="submit" name="follow" value="<?php echo $followButtonValue?>">
+</form>
+<?php endif ?>
+
+
 
 <h2>Dernières Actions</h2>
 <?php if ($history): ?>
