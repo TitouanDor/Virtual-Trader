@@ -52,20 +52,21 @@ foreach ($actions as &$action) {
                     <p><?php echo htmlspecialchars($action['description']); ?></p>
                     <p>Prix actuel: <?php echo htmlspecialchars($action['prix']); ?></p>
                     <h3>Prix Historiques</h3>
-                    <ul>
-                      <?php foreach ($action['historical_prices'] as $historicalPrice): ?>
-                        <li><?php echo htmlspecialchars($historicalPrice['game_month']."/".$historicalPrice['game_year'].": ".$historicalPrice['valeur_action']); ?></li>
-                      <?php endforeach; ?>
-                    </ul>
+                    <ul><?php foreach ($action['historical_prices'] as $historicalPrice): ?>
+                        <li><?php echo htmlspecialchars($historicalPrice['game_month']."/".$historicalPrice['game_year'].": ".$historicalPrice['valeur_action']); ?></li><?php endforeach; ?>
+                    </ul>                
                     <input type="hidden" name="action_id" value="<?php echo $action['id']; ?>">
                     <label for="quantity">Quantity:</label>
                     <input type="number" id="quantity" name="quantity" value="1" min="1">
-                    <button type="submit" name="buy" value="buy">Buy</button>
-                    <button type="submit" name="sell" value="sell">Sell</button>
+                    <input type="hidden" name="action" value="Buy">
+                    <button type="submit">Buy</button>
+                    
+                    <input type="hidden" name="action" value="Sell">
+                    <button type="submit">Sell</button>
                 </form>
             </li>
         <?php endforeach; ?>
     </ul>
-    <a href="profil.php">Return to my profil</a>
+    <a href="profil.php">Return to my profil</a>    
 </body>
 </html>

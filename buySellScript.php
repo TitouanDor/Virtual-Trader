@@ -6,7 +6,6 @@ if (!isset($_SESSION['id'])) {
     header('location: index.html');
     exit();
 }
-var_dump($_POST);
 
 // Database connection
 $dbHost = 'localhost';
@@ -20,9 +19,10 @@ try {
     header("Location: actionMarket.php");
     exit();
 }
+
 // Check if the required fields are set
-if (isset($_POST['stock_id'], $_POST['quantity'], $_POST['action'])) {
-    $stockId = $_POST['stock_id'];
+if (isset($_POST['action_id'], $_POST['quantity'], $_POST['action'])) {
+    $stockId = $_POST['action_id'];
     $quantity = $_POST['quantity'];
     $action = $_POST['action'];
     $userId = $_SESSION['id'];
@@ -71,8 +71,8 @@ if (isset($_POST['stock_id'], $_POST['quantity'], $_POST['action'])) {
         header("Location: actionMarket.php");
         exit();
     }
-    $actionParts = explode("_", $action);
-    $actionType = $actionParts[0];
+
+    if (isset($_POST['action']) && $_POST['action'] == "Buy") {
     if ($actionType == "Buy") {
         // Check if the user has enough money
         $totalCost = $stockPrice * $quantity;
@@ -133,7 +133,7 @@ if (isset($_POST['stock_id'], $_POST['quantity'], $_POST['action'])) {
             header("Location: actionMarket.php");
             exit();
         }
-    } elseif ($actionType == "Sell") {
+    } elseif (isset($_POST['action']) && $_POST['action'] == "Sell") {
         // Check if the user has enough stock
         try {
             $portfolioReq = $bdd->prepare("SELECT quantite FROM portefeuille WHERE joueur_id = ? AND action_id = ?");
@@ -199,6 +199,5 @@ if (isset($_POST['stock_id'], $_POST['quantity'], $_POST['action'])) {
     // Missing fields
     header("Location: actionMarket.php");
     exit();
-}
-
+} 
 }
