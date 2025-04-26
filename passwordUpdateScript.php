@@ -1,4 +1,3 @@
-php
 <?php
 session_start();
 
@@ -54,5 +53,5 @@ if (isset($_POST['token'], $_POST['new_password'], $_POST['confirm_password'])) 
         header('Location: index.html');
         exit();
     }
-}
+
 }

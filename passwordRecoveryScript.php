@@ -1,4 +1,3 @@
-php
 <?php
 session_start();
 
@@ -23,4 +22,6 @@ if (isset($_POST['user'])) {
 
     if ($result) {
         $userId = $result['id'];
-        $token = bin2hex
+        $token = bin2hex;
+    }
+}
