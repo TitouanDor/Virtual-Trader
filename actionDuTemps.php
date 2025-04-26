@@ -9,91 +9,88 @@ $dbPass = '';
 $bdd = new PDO("mysql:host=$dbHost;dbname=$dbName;charset=utf8", $dbUser, $dbPass);
 $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-// Get the current game state
-$reqGetGameState = $bdd->prepare("SELECT current_month, current_year FROM game_state WHERE id = 1");
-$reqGetGameState->execute();
-$gameState = $reqGetGameState->fetch(PDO::FETCH_ASSOC);
+// Get the current month and year
+$gameStateReq = $bdd->query("SELECT current_month, current_year FROM game_state");
+$gameState = $gameStateReq->fetch();
+$currentMonth = $gameState['current_month'];
+$currentYear = $gameState['current_year'];
 
 // Increment the month
-$gameState['current_month']++;
-if ($gameState['current_month'] > 12) {
-    $gameState['current_month'] = 1;
-    $gameState['current_year']++;
+$currentMonth++;
+if ($currentMonth > 12) {
+    $currentMonth = 1;
+    $currentYear++;
 }
 
 // Update the game state in the database
-$reqUpdateGameState = $bdd->prepare("UPDATE game_state SET current_month = ?, current_year = ? WHERE id = 1");
-$reqUpdateGameState->execute([$gameState['current_month'], $gameState['current_year']]);
+$updateGameStateReq = $bdd->prepare("UPDATE game_state SET current_month = ?, current_year = ?");
+$updateGameStateReq->execute([$currentMonth, $currentYear]);
 
 // Get all actions
-$reqGetAllActions = $bdd->query("SELECT id FROM actions");
-$actions = $reqGetAllActions->fetchAll(PDO::FETCH_ASSOC);
-
-// Base price request preparation
-$reqBasePrice = $bdd->prepare("SELECT prix FROM actions WHERE id = ?");
-
-// Prepare dividend distribution request
-$reqDividend = $bdd->prepare("SELECT id, dividende FROM actions WHERE date_dividende = ?");
+$actionsReq = $bdd->query("SELECT id, prix FROM actions");
+$actions = $actionsReq->fetchAll();
 
 // Process each action
 foreach ($actions as $action) {
     $actionId = $action['id'];
+    $initialPrice = $action['prix'];
 
-    // Get the last price of the action
-    $reqLastPrice = $bdd->prepare("SELECT valeur_action FROM cours_marche WHERE action_id = ? AND game_month = ? AND game_year = ?");
-    if ($gameState['current_month'] == 1) {
-        $reqLastPrice->execute([$actionId, 12, $gameState['current_year'] - 1]);
+    // Get the last price
+    $lastPriceReq = $bdd->prepare("SELECT valeur_action FROM cours_marche WHERE action_id = ? ORDER BY game_year DESC, game_month DESC LIMIT 1");
+    $lastPriceReq->execute([$actionId]);
+    $lastPrice = $lastPriceReq->fetch();
+
+    //check if a price exist
+    if ($lastPrice) {
+        $lastPrice = $lastPrice['valeur_action'];
+
+        // Generate a random change
+        $change = rand(-10, 10) / 100; // Change between -10% and +10%
+
+        // Update the price
+        $newPrice = $lastPrice * (1 + $change);
+
     } else {
-        $reqLastPrice->execute([$actionId, $gameState['current_month'] - 1, $gameState['current_year']]);
+        //Insert a price with the current month and year and the initial price
+        $insertPriceReq = $bdd->prepare("INSERT INTO cours_marche (action_id, game_month, game_year, valeur_action) VALUES (?, ?, ?, ?)");
+        $insertPriceReq->execute([$actionId, $currentMonth, $currentYear, $initialPrice]);
+        $newPrice = $initialPrice;
     }
 
-    $lastPriceData = $reqLastPrice->fetch(PDO::FETCH_ASSOC);
-    if ($lastPriceData) {
-        $lastPrice = $lastPriceData['valeur_action'];
-    } else {
-        $reqBasePrice->execute([$actionId]);
-        $lastPrice = $reqBasePrice->fetch(PDO::FETCH_ASSOC)['prix'];
-    }
-
-    // Generate a random change
-    $randomChange = rand(-10, 10);
-    $priceChange = ($lastPrice * ($randomChange / 100));
-    $newPrice = $lastPrice + $priceChange;
-
-    // Apply limits (minimum 1, maximum 10% increase or decrease)
-    $minLimit = $lastPrice * 0.9;
-    $maxLimit = $lastPrice * 1.1;
-    $newPrice = max(1, min($newPrice, $maxLimit));
-
-    // Round the new price
-    $newPrice = round($newPrice, 2);
+    // Apply limits (minimum 1)
+    $newPrice = max(1, $newPrice);
 
     // Insert the new price into cours_marche
-    $reqCours = $bdd->prepare("INSERT INTO cours_marche (action_id, game_month, game_year, valeur_action) VALUES (?,?,?,?)");
-    $reqCours->execute([$actionId, $gameState['current_month'], $gameState['current_year'], $newPrice]);
-    $reqHistory = $bdd->prepare("INSERT INTO historique (action_id, joueur_id, prix, nature, game_month, game_year) VALUES (?,?,?,?,?,?)");
-    $reqHistory->execute([$actionId, NULL, $newPrice, 'changement_prix', $gameState['current_month'], $gameState['current_year']]);
+    $insertPriceReq = $bdd->prepare("INSERT INTO cours_marche (action_id, game_month, game_year, valeur_action) VALUES (?, ?, ?, ?)");
+    $insertPriceReq->execute([$actionId, $currentMonth, $currentYear, $newPrice]);
+
     //update the current price
     $reqUpdatePrice = $bdd->prepare("UPDATE actions SET prix = ? WHERE id = ?");
     $reqUpdatePrice->execute([$newPrice, $actionId]);
-    //distribute dividend if it's time
-    $reqDividend->execute([$gameState['current_month']]);
-    $actionsWithDividends = $reqDividend->fetchAll(PDO::FETCH_ASSOC);
-    foreach ($actionsWithDividends as $actionWithDividends) {
-        $actionId = $actionWithDividends['id'];
-        $dividendeParAction = $actionWithDividends['dividende'];
-        $reqHistory = $bdd->prepare("INSERT INTO historique (action_id, joueur_id, prix, nature, game_month, game_year) VALUES (?,?,?,?,?,?)");
-        $reqGetPortfolio = $bdd->prepare("SELECT joueur_id, quantite FROM portefeuille WHERE action_id = ?");
-        $reqGetPortfolio->execute([$actionId]);
-        $joueursAvecAction = $reqGetPortfolio->fetchAll();
-        foreach ($joueursAvecAction as $joueur) {
-            $joueurId = $joueur['joueur_id'];
-            $quantite = $joueur['quantite'];
-            $dividendeTotal = $dividendeParAction * $quantite;
-            $reqUpdateMoney = $bdd->prepare("UPDATE joueur SET argent = argent + ? WHERE id = ?");
-            $reqUpdateMoney->execute([$dividendeTotal, $joueurId]);
-            $reqHistory->execute([$actionId, $joueurId, $dividendeParAction, 'dividende', $gameState['current_month'], $gameState['current_year']]);
-        }
+
+    //add to the history
+    $reqHistory = $bdd->prepare("INSERT INTO historique (action_id, joueur_id, prix, nature, game_month, game_year) VALUES (?,?,?,?,?,?)");
+    $reqHistory->execute([$actionId, NULL, $newPrice, 'changement_prix', $currentMonth, $currentYear]);
+
+}
+//distribute dividend if it's time
+$reqDividend = $bdd->prepare("SELECT id, dividende FROM actions WHERE date_dividende = ?");
+$reqDividend->execute([$currentMonth]);
+$actionsWithDividends = $reqDividend->fetchAll(PDO::FETCH_ASSOC);
+foreach ($actionsWithDividends as $actionWithDividends) {
+    $actionId = $actionWithDividends['id'];
+    $dividendeParAction = $actionWithDividends['dividende'];
+    $reqHistory = $bdd->prepare("INSERT INTO historique (action_id, joueur_id, prix, nature, game_month, game_year) VALUES (?,?,?,?,?,?)");
+    $reqGetPortfolio = $bdd->prepare("SELECT joueur_id, quantite FROM portefeuille WHERE action_id = ?");
+    $reqGetPortfolio->execute([$actionId]);
+    $joueursAvecAction = $reqGetPortfolio->fetchAll();
+    foreach ($joueursAvecAction as $joueur) {
+        $joueurId = $joueur['joueur_id'];
+        $quantite = $joueur['quantite'];
+        $dividendeTotal = $dividendeParAction * $quantite;
+        $reqUpdateMoney = $bdd->prepare("UPDATE joueur SET argent = argent + ? WHERE id = ?");
+        $reqUpdateMoney->execute([$dividendeTotal, $joueurId]);
+        $reqHistory->execute([$actionId, $joueurId, $dividendeParAction, 'dividende', $currentMonth, $currentYear]);
     }
 }
 ?>
