@@ -42,12 +42,9 @@ if ($data) {
         header('location: profil.php');
         exit();
     } else {
+        $_SESSION['error'] = "Incorrect email or password";
         header('location: index.php');
         exit();
     }
-} else {
-    $_SESSION['error'] = "Incorrect email or password";
-    
 }
-header('location: index.php');
 ?>

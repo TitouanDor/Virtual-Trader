@@ -17,19 +17,6 @@ try {
 
 // Check if the user is connected and lost
 if(isset($_SESSION['id'])){
-    // Database connection
-    try {
-        $dbHost = 'localhost';
-        $dbName = 'virtual_trader';
-        $dbUser = 'root';
-        $dbPass = '';
-        $bdd = new PDO("mysql:host=$dbHost;dbname=$dbName;charset=utf8", $dbUser, $dbPass);
-        $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    } catch (PDOException $e) {
-        $_SESSION['error'] = "Database connection error\n" . $e->getMessage();
-        header('location: index.html');
-        exit();
-    }
     $req = $bdd->prepare("SELECT j.id FROM joueur j WHERE j.id = ? AND j.id NOT IN (SELECT p.player_id FROM portefeuille p) AND j.argent < 1000");
     $req->execute([$_SESSION['id']]);
     if($req->fetch()){
@@ -143,21 +130,14 @@ if ($currentTime->diff($lastUpdate)->i >= 1) {
     }
 }
 
-if (isset($_SESSION['error'])) {
-    echo "<p>";
-    echo str_replace("\n", "<br>", $_SESSION['error']);
-    echo "</p>";
-    unset($_SESSION['error']);
-}
-
-if (isset($_SESSION['success'])) {
-    echo "<p>";
-    echo str_replace("\n", "<br>", $_SESSION['success']);
-    echo "</p>";
-    unset($_SESSION['success']);
-}
 ?>
 
+<a href="leaderboard.php">Leaderboard</a>
+<br>
+
+<?php
+
+?>
 
 <!DOCTYPE html>
 <html lang="fr">
@@ -168,47 +148,40 @@ if (isset($_SESSION['success'])) {
 </head>
 <body>
 
-<?php
-if (isset($_SESSION['error'])) {
-    echo "<p>";
-    echo str_replace("\n", "<br>", $_SESSION['error']);
-    echo "</p>";
-    unset($_SESSION['error']);
-}
-
-if (isset($_SESSION['success'])) {
-    echo "<p>";
-    echo str_replace("\n", "<br>", $_SESSION['success']);
-    echo "</p>";
-    unset($_SESSION['success']);
-}
-?>
-<a href="leaderboard.php">Leaderboard</a>
-<br>
-    <?php if(!isset($_SESSION['id'])): ?>
+    <?php 
+    if (isset($_SESSION['error'])) {
+        echo "<p>";
+        echo str_replace("\n", "<br>", $_SESSION['error']);
+        echo "</p>";
+        unset($_SESSION['error']);
+    }
     
-
-    <div name="box_connection" class="box_connection">
-        <p>Connection à Virtual-trader</p>
-        <form action="connectionScript.php" method="post">
-
-            <div class="group-from">
-                <label for="email">
-                    <input type="text" name="email" id="email" placeholder="E-mail" value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : '' ?>">
-                </label>
-            </div>
-
-            <div class="group-from">
-                <label for="password">
-                    <input type="password" name="password" id="password" placeholder="mot de passe">
-                </label>
-            </div>
-
-            <div class="group-from">
-                <label>
-                    <input type="submit" value="Se connecter">
-                </label>
-            </div>
+    if (isset($_SESSION['success'])) {
+        echo "<p>";
+        echo str_replace("\n", "<br>", $_SESSION['success']);
+        echo "</p>";
+        unset($_SESSION['success']);
+    }
+    if(!isset($_SESSION['id'])): ?>
+        <div name="box_connection" class="box_connection">
+            <p>Connection à Virtual-trader</p>
+            <form action="connectionScript.php" method="post">
+                <div class="group-from">
+                    <label for="email">
+                        <input type="text" name="email" id="email" placeholder="E-mail" value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : '' ?>">
+                    </label>
+                </div>
+                <div class="group-from">
+                    <label for="password">
+                        <input type="password" name="password" id="password" placeholder="mot de passe">
+                    </label>
+                </div>
+    
+                <div class="group-from">
+                    <label>
+                        <input type="submit" value="Se connecter">
+                    </label>
+                </div>
         </form>
 
         <p><a href="inscription.php">Inscription</a></p>

@@ -24,11 +24,13 @@ if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
     exit();
 }
 
+// Check if the email already exists
 $req = $bdd->prepare("SELECT email FROM joueur WHERE email = ?");
 try {
     $req->execute([$email]);
     $data = $req->fetch();
 } catch (PDOException $e) {
+    
     $_SESSION['error'] = "Error while verifying the email";
     header('Location: inscription.php');
     exit();
@@ -40,6 +42,7 @@ if ($data != null) {
     exit();
 }
 
+// Insert the new user
 try {
     $req = $bdd->prepare("INSERT INTO joueur(email, mdp, nom, prenom, username, argent) VALUES (?,?,?,?,?,?)");
     $req->execute([$email, $password, $nom, $prenom, $username, 10000.00]);
