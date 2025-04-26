@@ -9,7 +9,7 @@ if (!isset($_SESSION['id'])) {
     $req = $bdd->prepare("SELECT joueur.username, joueur.argent + COALESCE(SUM(portefeuille.quantite * actions.prix), 0) AS valeur_portefeuille
                           FROM joueur
                           LEFT JOIN portefeuille ON joueur.id = portefeuille.joueur_id
-                          LEFT JOIN actions ON portefeuille.stock_id = actions.id
+                          LEFT JOIN actions ON portefeuille.action_id = actions.id
                           GROUP BY joueur.id
                           ORDER BY valeur_portefeuille DESC");
     $req->execute();
