@@ -1,8 +1,8 @@
 <?php
 session_start();
 
-if (isset($_POST['user'])) {
-    $user = $_POST['user'];
+if (isset($_POST['user_indentifier'])) {
+    $user = $_POST['user_indentifier'];
 
     $dbHost = 'localhost';
     $dbName = 'virtual_trader';
@@ -22,6 +22,5 @@ if (isset($_POST['user'])) {
 
     if ($result) {
         $userId = $result['id'];
-        $token = bin2hex;
-    }
-}
+        $token = bin2hex
+
