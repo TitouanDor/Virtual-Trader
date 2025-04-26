@@ -84,7 +84,6 @@ if (isset($_SESSION['success'])) {
 </form>
 <br>
 <a href="profil.php">Return to my profil</a><br>
-<a href="leaderboard.php">Leaderboard</a>
 
 
 </body>

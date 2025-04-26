@@ -61,7 +61,7 @@ $history = $historyReq->fetchAll();
 <?php endif; ?>
 <a href="profil.php">Retourner à mon profil</a>
 <br>
-<a href="leaderboard.php">Leaderboard</a>
+<a href="leaderboard.php">Classement</a>
 
 </body>
 </html>
