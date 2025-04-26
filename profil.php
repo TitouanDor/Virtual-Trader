@@ -91,6 +91,11 @@ $investedActionsReq = $bdd->prepare("SELECT actions.nom, portefeuille.quantite F
 $investedActionsReq->execute([$_SESSION['id']]);
 $investedActions = $investedActionsReq->fetchAll();
 
+$followedPlayersReq = $bdd->prepare("SELECT j.id, j.username FROM joueur j JOIN followers f ON j.id = f.followed_user_id WHERE f.user_id = ?");
+$followedPlayersReq->execute([$_SESSION['id']]);
+$followedPlayers = $followedPlayersReq->fetchAll();
+
+
 // Recherche de joueur
 if (isset($_SESSION['search_result'])) {    
     $searchResult = $_SESSION['search_result'];
@@ -149,9 +154,9 @@ if(isset($_SESSION["error"])){
     $isFollowing = $isFollowingReq->fetch();
     ?>
     <form action="followScript.php" method="post">
-        <input type="hidden" name="followed_user_id" value="<?php echo $searchResult['id']; ?>">
+        <input type="hidden" name="followed_user_id" value="<?php echo $searchResult["id"]; ?>">
         <?php if ($isFollowing): ?>
-            <input type="submit" name="unfollow" value="Unfollow">
+            <input type="submit" name="follow" value="Unfollow">
         <?php else: ?>
             <input type="submit" name="follow" value="Follow">
         <?php endif; ?>
@@ -172,6 +177,16 @@ if(isset($_SESSION["error"])){
 <?php elseif (isset($error)): echo "<p>".$error."</p>"; endif;?>
 
 <a href="changePassword.php">Changer de mot de passe</a>
+<?php if ($followedPlayers): ?>
+    <h2>Players followed by you</h2>
+    <ul>
+        <?php foreach ($followedPlayers as $followedPlayer): ?>
+            <li><a href="playerProfil.php?id=<?php echo $followedPlayer['id']; ?>"><?php echo htmlspecialchars($followedPlayer['username']); ?></a></li>
+        <?php endforeach; ?>
+    </ul>
+<?php else: ?>
+    <p>You are not following anyone.</p>
+<?php endif; ?>
 <br>
 <a href="logout.php">Déconnexion</a>
 <br><a href="leaderboard.php?from=profil">Classement</a>
