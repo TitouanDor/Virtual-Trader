@@ -1,36 +1,44 @@
 <?php
-session_start(); 
+session_start();
 
+// Check if the user is logged in
 if (!isset($_SESSION['id'])) {
     header('location: index.html');
     exit();
 }
+
+// Database connection
 $bdd = new PDO('mysql:host=localhost;dbname=virtual_trader;charset=utf8', 'root', '');
 $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-$req = $bdd->prepare("SELECT joueur.username, joueur.argent + COALESCE(SUM(portefeuille.quantite * actions.prix), 0) AS valeur_portefeuille
-                      FROM joueur
-                      LEFT JOIN portefeuille ON joueur.id = portefeuille.joueur_id
-                      LEFT JOIN actions ON portefeuille.action_id = actions.id
-                      GROUP BY joueur.id
-                      ORDER BY valeur_portefeuille DESC");
-$req->execute();
-$leaderboard = $req->fetchAll();
+// Get leaderboard data
+$leaderboardReq = $bdd->prepare("SELECT username, argent FROM joueur ORDER BY argent DESC");
+$leaderboardReq->execute();
+$leaderboard = $leaderboardReq->fetchAll();
 
+// Determine the return link
+$from = isset($_GET['from']) ? $_GET['from'] : '';
+$returnLink = 'profil.php'; // Default return link
 
+if ($from === 'index') {
+    $returnLink = 'index.html';
+} elseif ($from === 'profil') {
+    $returnLink = 'profil.php';
+}
 ?>
 
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Leaderboard</title>
-    <a href="index.html">Retour à l'index</a>
 </head>
 <body>
 
 <h1>Classement</h1>
 
+<a href="<?php echo $returnLink; ?>">Retour</a>
 
 <?php if ($leaderboard): ?>
     <table>
@@ -39,15 +47,15 @@ $leaderboard = $req->fetchAll();
                 <th>Nom d'utilisateur</th>
                 <th>Valeur du portefeuille</th>
             </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($leaderboard as $player): ?>
-                <tr>
-                    <td><?php echo htmlspecialchars($player['username']); ?></td>
-                    <td><?php echo htmlspecialchars($player['valeur_portefeuille']); ?> €</td>
-                </tr>
-            <?php endforeach; ?>
-        </tbody>
+            </thead>
+            <tbody>
+                <?php foreach ($leaderboard as $player): ?>
+                    <tr>
+                        <td><?php echo htmlspecialchars($player['username']); ?></td>
+                        <td><?php echo htmlspecialchars($player['argent']); ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
     </table>
 <?php else: ?>
     <p>No players found.</p>
