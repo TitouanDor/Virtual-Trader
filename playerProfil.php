@@ -1,10 +1,7 @@
 <?php
 
 $currentTime = new DateTime();
-if (!isset($_SESSION['id'])) {
-    header('location: index.html');
-    exit();
-}
+
 
 // Database connection
 $dbHost = 'localhost';
@@ -23,7 +20,7 @@ if (!isset($_GET['id']) || empty($_GET['id'])) {
 $playerId = htmlspecialchars($_GET['id']);
 
 // Récupérer les informations du joueur
-$playerReq = $bdd->prepare("SELECT nom, prenom, email, argent FROM joueur WHERE id = ?");
+$playerReq = $bdd->prepare("SELECT nom, prenom, username, argent FROM joueur WHERE id = ?");
 $playerReq->execute([$playerId]);
 $player = $playerReq->fetch();
 if (!$player) {
@@ -33,7 +30,7 @@ if (!$player) {
 
 
 // Récupérer l'historique du joueur
-$historyReq = $bdd->prepare("SELECT h.*, a.nom AS action_name FROM historique h JOIN actions a ON h.action_id = a.id WHERE h.player_id = ? ORDER BY h.real_date DESC");
+$historyReq = $bdd->prepare("SELECT historique.*, actions.nom AS action_name FROM historique JOIN actions ON historique.action_id = actions.id WHERE historique.joueur_id = ? ORDER BY historique.real_date DESC");
 $historyReq->execute([$playerId]);
 $history = $historyReq->fetchAll();
 ?>
@@ -46,7 +43,7 @@ $history = $historyReq->fetchAll();
     <title>Profil du joueur</title>
 </head>
 <body>
-<h1>Profil de <?php echo htmlspecialchars($player['email']); ?></h1>
+<h1>Profil de <?php echo htmlspecialchars($player['username']); ?></h1>
 
 <p>Nom: <?php echo htmlspecialchars($player['nom']); ?></p>
 <p>Prénom: <?php echo htmlspecialchars($player['prenom']); ?></p>
