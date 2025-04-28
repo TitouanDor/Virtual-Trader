@@ -1,22 +1,22 @@
 <?php
 session_start();
 
-// Check if the user is logged in
+// Verif si joueur connecte
 if (!isset($_SESSION['id'])) {
     header('location: index.html');
     exit();
 }
 
-// Database connection
+// Connection BDD
 $bdd = new PDO('mysql:host=localhost;dbname=virtual_trader;charset=utf8', 'root', '');
 $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-// Get leaderboard data
+// Recup data pour classement
 $leaderboardReq = $bdd->prepare("SELECT username, argent FROM joueur ORDER BY argent DESC");
 $leaderboardReq->execute();
 $leaderboard = $leaderboardReq->fetchAll();
 
-// Determine the return link
+// Determiner où le bouton retour doit mener
 $from = isset($_GET['from']) ? $_GET['from'] : '';
 $returnLink = 'profil.php'; // Default return link
 
@@ -58,7 +58,7 @@ if ($from === 'index') {
             </tbody>
     </table>
 <?php else: ?>
-    <p>No players found.</p>
+    <p>Pas d'utilisateurs trouvé.</p>
 <?php endif; ?>
 
 </body>

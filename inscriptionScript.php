@@ -29,4 +29,3 @@ $insertionReq->execute([$nom, $prenom, $email, $nomUtilisateur, $mdp]);
 $_SESSION['success'] = "Compte créé avec succès ! Vous pouvez maintenant vous connecter";
 header('Location: index.html');
 exit();
-?>

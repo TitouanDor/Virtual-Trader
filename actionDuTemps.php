@@ -1,79 +1,82 @@
 <?php
-// Database connection information
+// Connection BDD
 $dbHost = 'localhost';
 $dbName = 'virtual_trader';
 $dbUser = 'root';
 $dbPass = '';
 
-// Database connection
 $bdd = new PDO("mysql:host=$dbHost;dbname=$dbName;charset=utf8", $dbUser, $dbPass);
 $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-// Get the current month and year
+// Recup mois et annee
 $gameStateReq = $bdd->query("SELECT current_month, current_year FROM game_state");
 $gameState = $gameStateReq->fetch();
 $currentMonth = $gameState['current_month'];
 $currentYear = $gameState['current_year'];
 
-// Increment the month
+// Ajouter mois et annee
 $currentMonth++;
 if ($currentMonth > 12) {
     $currentMonth = 1;
     $currentYear++;
 }
 
-// Update the game state in the database
+// MAJ game_state dans BDD
 $updateGameStateReq = $bdd->prepare("UPDATE game_state SET current_month = ?, current_year = ?");
 $updateGameStateReq->execute([$currentMonth, $currentYear]);
 
-// Get all actions
+// Recup tt actions pour MAJ
 $actionsReq = $bdd->query("SELECT id, prix FROM actions");
 $actions = $actionsReq->fetchAll();
 
-// Process each action
 foreach ($actions as $action) {
     $actionId = $action['id'];
     $initialPrice = $action['prix'];
 
-    // Get the last price
+    // Verif derniers prix
     $lastPriceReq = $bdd->prepare("SELECT valeur_action FROM cours_marche WHERE action_id = ? ORDER BY game_year DESC, game_month DESC LIMIT 1");
     $lastPriceReq->execute([$actionId]);
     $lastPrice = $lastPriceReq->fetch();
 
-    //check if a price exist
+    // Verif si derniers prix existe
     if ($lastPrice) {
         $lastPrice = $lastPrice['valeur_action'];
 
-        // Generate a random change
-        $change = rand(-10, 10) / 100; // Change between -10% and +10%
-
-        // Update the price
+        // Change le prix de l'action
+        $change = rand(-3, 3) / 100;
         $newPrice = $lastPrice * (1 + $change);
 
+
+        //----------------------- CHANGER QUE SI ENTRE + ou - 10%, ON NE PEUT AGMENTER MAX QUE DE +-10% -----------------------//
+
+
+
+
+
     } else {
-        //Insert a price with the current month and year and the initial price
+        // Nouveau prix avec date
         $insertPriceReq = $bdd->prepare("INSERT INTO cours_marche (action_id, game_month, game_year, valeur_action) VALUES (?, ?, ?, ?)");
         $insertPriceReq->execute([$actionId, $currentMonth, $currentYear, $initialPrice]);
         $newPrice = $initialPrice;
     }
 
-    // Apply limits (minimum 1)
-    $newPrice = max(1, $newPrice);
+    // Le prix ne peut pas tomber en dessous de 1.
+    $newPrice = max(1.00, $newPrice);
 
-    // Insert the new price into cours_marche
+    // MAJ prix dans cours marche
     $insertPriceReq = $bdd->prepare("INSERT INTO cours_marche (action_id, game_month, game_year, valeur_action) VALUES (?, ?, ?, ?)");
     $insertPriceReq->execute([$actionId, $currentMonth, $currentYear, $newPrice]);
 
-    //update the current price
+    // MAJ prix
     $reqUpdatePrice = $bdd->prepare("UPDATE actions SET prix = ? WHERE id = ?");
     $reqUpdatePrice->execute([$newPrice, $actionId]);
 
-    //add to the history
+    // MAJ historique
     $reqHistory = $bdd->prepare("INSERT INTO historique (action_id, joueur_id, prix, nature, game_month, game_year) VALUES (?,?,?,?,?,?)");
     $reqHistory->execute([$actionId, NULL, $newPrice, 'change_prix', $currentMonth, $currentYear]);
 
 }
-//distribute dividend if it's time
+// Donner dividendes si besoin
 $reqDividend = $bdd->prepare("SELECT id, dividende FROM actions WHERE date_dividende = ?");
 $reqDividend->execute([$currentMonth]);
 $actionsWithDividends = $reqDividend->fetchAll(PDO::FETCH_ASSOC);
@@ -93,4 +96,3 @@ foreach ($actionsWithDividends as $actionWithDividends) {
         $reqHistory->execute([$actionId, $joueurId, $dividendeParAction, 'dividende', $currentMonth, $currentYear]);
     }
 }
-?>

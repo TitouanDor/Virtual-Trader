@@ -1,14 +1,13 @@
 <?php
 session_start();
 
-// Check if the user is logged in
+// Verif si joueur connecte
 if (!isset($_SESSION['id'])) {
     header('location: index.html');
     exit();
 }
 
-// Database connection
-$dbHost = 'localhost';
+// Connection BDD$dbHost = 'localhost';
 $dbName = 'virtual_trader';
 $dbUser = 'root';
 $dbPass = '';

@@ -20,20 +20,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") { // Si la requête est de type POST
         $user = $req->fetch(); // Récupérer l'utilisateur trouvé
 
         if ($user && password_verify($mdp, $user['mdp'])) { // Si un utilisateur est trouvé et que le mot de passe est correct
-            // Le mot de passe est correct, démarrer une nouvelle session
+            // Le mot de passe est correct, démarrer une nouvelle session.
             $_SESSION['id'] = $user['id']; // Stocker l'id de l'utilisateur dans la session
 
             // Rediriger vers profil.php
             header('Location: profil.php'); // Rediriger l'utilisateur vers profil.php
             exit(); // Arrêter l'exécution du script
-        } else {
-            header('Location: index.html');
-            exit();
         }
     } else {
         header('Location: index.html');
         exit();
     }
 } 
-?>
-?>

@@ -1,13 +1,13 @@
 <?php
 session_start();
 
-// Check if the user is logged in
+// Verif si joueur connecte
 if (!isset($_SESSION['id'])) {
     header("Location: index.html");
     exit();
 }
 
-// Get the followed user ID from POST
+// Recup id du joueur
 if (!isset($_POST['followed_user_id'])) {
     header("Location: profil.php");
     exit();
@@ -16,21 +16,21 @@ if (!isset($_POST['followed_user_id'])) {
 $followedUserId = htmlspecialchars($_POST['followed_user_id']);
 $userId = $_SESSION['id'];
 
-// Check if the user is trying to follow themselves
+// Verif si le joueur essaye de se suivre lui-même
 if ($followedUserId == $userId) {
     header("Location: profil.php");
     exit();
 }
 
-// Database connection
+// Connection BDD
 $bdd = new PDO('mysql:host=localhost;dbname=virtual_trader;charset=utf8', 'root', '');
 
-// Check if the user is already following the player
+// Verif si le joueur suit deja ce joueur
 $req = $bdd->prepare("SELECT * FROM followers WHERE user_id = ? AND followed_user_id = ?");
 $req->execute([$userId, $followedUserId]);
 $following = $req->fetch();
 
-// Follow or unfollow the user
+// Follow/Unfollow
 if ($following) {
     // Unfollow
     $req = $bdd->prepare("DELETE FROM followers WHERE user_id = ? AND followed_user_id = ?");

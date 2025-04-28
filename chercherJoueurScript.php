@@ -3,11 +3,9 @@ session_start();
 
 $search = $_POST['search'];
 if (!isset($_POST['search'])) {
-    $_SESSION['error'] = "Please enter a username or an email to search.";
     header('location: profil.php');
     exit();
 }
-
 
 try {
     $bdd = new PDO('mysql:host=localhost;dbname=virtual_trader;charset=utf8', 'root', '');
@@ -19,11 +17,7 @@ try {
 
     if ($result) {
         $_SESSION['search_result'] = $result;
-        header('location: profil.php');
-        exit();
-    } else {
-        $_SESSION['error'] = "No user found with that username or email.";
-        header('location: profil.php');
+        header('Location: profilJoueur.php?id='.$result['id']);
         exit();
     }
 
@@ -32,4 +26,3 @@ try {
     header('location: profil.php');
     exit();
 }
-?>

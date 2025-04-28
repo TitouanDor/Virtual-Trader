@@ -20,25 +20,25 @@ session_start();
         <form action="inscriptionScript.php" method="post">
             <div class="group-from">
             <label>
-                <input type="text" name="prenom" placeholder="Prénom" value="<?php echo isset($_POST['prenom']) ? htmlspecialchars($_POST['prenom']) : '' ?>">
+                <input type="text" name="prenom" placeholder="Prénom">
             </label>
             </div>
 
             <div class="group-from">
             <label>
-                <input type="text" name="nom" placeholder="Nom" value="<?php echo isset($_POST['nom']) ? htmlspecialchars($_POST['nom']) : '' ?>">
+                <input type="text" name="nom" placeholder="Nom">
             </label>
             </div>
 
             <div class="group-from">
                 <label>
-                    <input type="text" name="username" placeholder="Nom d'utilisateur" value="<?php echo isset($_POST['username']) ? htmlspecialchars($_POST['username']) : '' ?>">
+                    <input type="text" name="username" placeholder="Nom d'utilisateur">
                 </label>
             </div>
 
             <div class="group-from">
             <label>
-                <input type="text" name="email" placeholder="E-mail" value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : '' ?>">
+                <input type="text" name="email" placeholder="E-mail">
             </label>
             </div>
 
