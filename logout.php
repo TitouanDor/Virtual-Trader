@@ -4,7 +4,7 @@ session_start();
 // Supprimer toutes les variables de session
 $_SESSION = array();
 
-// Détruire la session
+// Réinitialise la session
 session_destroy();
 
 // Rediriger vers index.html

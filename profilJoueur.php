@@ -2,11 +2,7 @@
 session_start();
 
 // Database connection
-$dbHost = 'localhost';
-$dbName = 'virtual_trader';
-$dbUser = 'root';
-$dbPass = '';
-$bdd = new PDO("mysql:host=$dbHost;dbname=$dbName;charset=utf8", $dbUser, $dbPass);
+$bdd = new PDO('mysql:host=localhost;dbname=virtual_trader;charset=utf8', 'root', '');
 $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 // Check if player ID is provided

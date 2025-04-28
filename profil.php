@@ -9,14 +9,8 @@ if (!isset($_SESSION['id'])) {
 }
 
 // Connection BDD
-$dbHost = 'localhost';
-$dbName = 'virtual_trader';
-$dbUser = 'root';
-$dbPass = '';
-$bdd = new PDO("mysql:host=$dbHost;dbname=$dbName;charset=utf8", $dbUser, $dbPass);
+$bdd = new PDO('mysql:host=localhost;dbname=virtual_trader;charset=utf8', 'root', '');
 $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-
 
 // Get the current game state and update if necessary
 $gameStateReq = $bdd->prepare("SELECT * FROM game_state");

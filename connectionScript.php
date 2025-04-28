@@ -2,11 +2,7 @@
 session_start();
 
 // Connexion à la base de données
-$dbHost = 'localhost'; // Hôte de la base de données
-$dbName = 'virtual_trader'; // Nom de la base de données
-$dbUser = 'root'; // Nom d'utilisateur de la base de données
-$dbPass = ''; // Mot de passe de la base de données
-$bdd = new PDO("mysql:host=$dbHost;dbname=$dbName;charset=utf8", $dbUser, $dbPass); // Nouvelle connexion PDO
+$bdd = new PDO('mysql:host=localhost;dbname=virtual_trader;charset=utf8', 'root', '');
 $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 // Vérifier si le formulaire a été soumis
