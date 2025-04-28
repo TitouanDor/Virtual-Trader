@@ -23,7 +23,7 @@ $gameStateReq = $bdd->prepare("SELECT * FROM game_state");
     $gameStateReq->execute();
     $gameState = $gameStateReq->fetch();
 
-$userReq = $bdd->prepare("SELECT nom, prenom, email, argent FROM joueur WHERE id = ?"); // Récupération des informations de l'utilisateur
+$userReq = $bdd->prepare("SELECT * FROM joueur WHERE id = ?"); // Récupération des informations de l'utilisateur
 $userReq->execute([$_SESSION['id']]);
 $user = $userReq->fetch();
 
@@ -63,7 +63,7 @@ if(isset($_SESSION["error"])){
 <?php if ($user): ?>
         <p>Nom: <?php echo htmlspecialchars($user['nom']); ?></p>
         <p>Prénom: <?php echo htmlspecialchars($user['prenom']); ?></p>
-        <p>Nom d'utilisateur: <?php echo htmlspecialchars($user['email']); ?></p>
+        <p>Nom d'utilisateur: <?php echo htmlspecialchars($user['username']); ?></p>
         <p>Solde: <?php echo htmlspecialchars($user['argent']); ?></p>
 <?php endif; ?>
         <h2>Vos Actions</h2>
