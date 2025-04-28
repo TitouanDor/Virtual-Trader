@@ -2,36 +2,34 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="CSSFile\index.css">
+    <link rel="stylesheet" href="CSSFile/index.css">
     <title>Virtual-trader</title>
 </head>
 <body>
 
+<a href="leaderboard.php?from=index">Classement</a>
+<br>
     <div name="box_connection" class="box_connection">
-        <p>Connection à Virtual-trader</p>
-        <form action="connectionScript.php">
-
+        <p>Connexion à Virtual-Trader</p>
+        <form action="connectionScript.php" method="post">
             <div class="group-from">
-                <label>
-                    <input type="text" name="e-mail" placeholder="E-mail">
+                <label for="email">
+                    <input type="text" name="email" id="email" placeholder="Adresse e-mail">
                 </label>
             </div>
-
             <div class="group-from">
-                <label>
-                    <input type="password" name="mdp" placeholder="mot de passe">
+                <label for="mdp">
+                    <input type="password" name="mdp" id="mdp" placeholder="Mot de passe">
                 </label>
             </div>
-
             <div class="group-from">
                 <label>
-                    <input type="submit" value="Se connecter">
+                    <input type="submit" value="Se Connecter">
                 </label>
             </div>
         </form>
-
         <p><a href="inscription.php">Inscription</a></p>
+        <p><a href="changerMDP.php">Mot de passe oublié</a></p>
     </div>
-
 </body>
 </html>

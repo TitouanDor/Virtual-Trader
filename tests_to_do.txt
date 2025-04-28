@@ -1,0 +1,59 @@
+tests_to_do.txt
+
+Tests à Effectuer
+
+I. Modification du Mot de Passe:
+    1. Accès au Changement de Mot de Passe:
+        - Vérifier qu'il existe un moyen d'accéder au formulaire de changement de mot de passe.
+    2. Changement de Mot de Passe Réussi:
+        - Changer le mot de passe par un nouveau.
+        - Vérifier que le nouveau mot de passe est correctement enregistré dans la base de données.
+        - Se connecter avec le nouveau mot de passe pour confirmer.
+
+II. Recherche et Suivi de Joueurs:
+    1. Recherche de Joueurs:
+        - Rechercher des noms d'utilisateur existants.
+        - Rechercher des noms d'utilisateur inexistants.
+        - Vérifier que les résultats de la recherche s'affichent correctement.
+    2. Suivi de Joueurs:
+        - Trouver un joueur.
+        - Vérifier que vous pouvez voir ses dernières actions d'achat/vente.
+
+III. Initialisation/Reprise du Jeu:
+    1. Nouvelle Partie:
+        - Démarrer une nouvelle partie.
+        - Vérifier que l'état du jeu est correctement initialisé (argent de départ, date, etc.).
+    2. Reprendre la Partie:
+        - Jouer un peu, faire quelques transactions.
+        - Se déconnecter.
+        - Se reconnecter.
+        - Vérifier que vous avez correctement repris la partie.
+        - Vérifier que toutes les valeurs du jeu sont correctes (prix des actions, argent...).
+    3. Stockage de l'État du Jeu:
+        - Vérifier que l'état du jeu est sauvegardé dans la base de données (date, valeurs des actions, portefeuilles des joueurs).
+
+IV. Dividendes:
+    1. Gain de Dividendes:
+        - Vérifier que, si vous possédez une action à la date du dividende, vous gagnez de l'argent.
+    2. Date:
+        - Vérifier qu'une action a une date de dividende.
+        - Vérifier que la date du dividende est enregistrée dans la base de données.
+
+V. Mise à Jour du Jeu:
+    1. Temps:
+        - Vérifier que le jeu avance d'un mois chaque minute.
+    2. Dividendes:
+        - Vérifier que les dividendes sont correctement attribués aux joueurs.
+    3. Prix des Actions:
+        - Vérifier que le prix des actions change correctement chaque mois.
+
+VI. Perte de la Partie:
+    1. Perte:
+        - Vérifier qu'un joueur perd quand la valeur de son portefeuille est inférieure à 1000€.
+        - Vérifier qu'il est impossible de faire quoi que ce soit quand on a perdu.
+
+VII. Classement:
+    1. Affichage:
+        - Vérifier que le classement est correctement affiché.
+    2. Données Correctes:
+        - Vérifier que les données affichées dans le classement sont correctes (nom du joueur et valeur du portefeuille).

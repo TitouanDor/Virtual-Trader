@@ -1,24 +1,32 @@
 <?php
-$bdd = new PDO('mysql:host=localhost;dbname=virtual_trader;charset=utf8', 'root', '');
-$nom = $_POST['nom'];
-$prenom = $_POST['prenom'];
-$email = $_POST['e-mail'];
-$username = $_POST['username'];
-$password = PASSWORD_HASH($_POST['mdp'], PASSWORD_DEFAULT);
+session_start();
 
-$req = $bdd->prepare("SELECT email FROM joueur WHERE email = ?");
-$req->execute([$email]);
-$data = $req->fetch();
+// Connexion à la base de données
+$bdd = new PDO('mysql:host=localhost;dbname=virtual_trader;charset=utf8', 'root', ''); 
 
-if($data != null){
-    session_start();
-    $_SESSION['valid'] = 1;
+// Nettoyage et filtrage des entrées
+$nom = htmlspecialchars(filter_var($_POST['nom'], FILTER_SANITIZE_STRING));
+$prenom = htmlspecialchars(filter_var($_POST['prenom'], FILTER_SANITIZE_STRING));
+$email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
+$nomUtilisateur = htmlspecialchars(filter_var($_POST['username'], FILTER_SANITIZE_STRING));
+$mdp = password_hash($_POST['password'], PASSWORD_DEFAULT);
+
+// Vérification de la validité de l'email
+if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
     header('Location: inscription.php');
     exit();
 }
 
-$req = $bdd->prepare("INSERT INTO joueur(email, mdp, nom,prenom,username,argent) VALUES (?,?,?,?,?,?);");
-$req->execute([$email,$password,$nom,$prenom,$username,1000]);
+// Vérification si le nom d'utilisateur et l'email existent déjà
+$verificationReq = $bdd->prepare("SELECT COUNT(*) as count FROM joueur WHERE email = ? OR username = ?");
+$verificationReq->execute([$email, $nomUtilisateur]);
+$verification = $verificationReq->fetch();
+
+// Insertion du nouvel utilisateur
+$insertionReq = $bdd->prepare("INSERT INTO joueur (nom, prenom, email, username, mdp) VALUES (?, ?, ?, ?, ?)");
+$insertionReq->execute([$nom, $prenom, $email, $nomUtilisateur, $mdp]);
+
+$_SESSION['success'] = "Compte créé avec succès ! Vous pouvez maintenant vous connecter";
 header('Location: index.html');
 exit();
 ?>

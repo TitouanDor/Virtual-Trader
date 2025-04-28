@@ -1,0 +1,14 @@
+    *   Implement buy/sell functionality.
+    *   Implement search/filter for stocks.
+
+Phase 4: Profile Reset
+
+*   Task 6: Profile Reset
+    *   Add the reset button to `profil.php`.
+    *   Implement the reset logic:
+        *   Reset balance.
+        *   Reset portfolio.
+        *   Leave market and game date unchanged.
+
+
+        

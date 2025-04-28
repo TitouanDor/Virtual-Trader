@@ -1,22 +1,18 @@
 <?php
-    session_start();
-    if($_SESSION['valid'] == 1) {
-        echo ('Email deja utilise');
-    }
+session_start();
 ?>
-
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Inscription VT</title>
+    <title>Inscription</title>
     <link rel="stylesheet" href="CSSFile\inscription.css">
 </head>
 <body>
 <div>
     <a href="index.html">
-    <button>
-        Retour
-    </button>
+        <button>
+            Retour
+        </button>
     </a>
 </div>
     <div name="box_inscription" class="box_inscription">
@@ -24,31 +20,31 @@
         <form action="inscriptionScript.php" method="post">
             <div class="group-from">
             <label>
-                <input type="text" name="prenom" placeholder="Prénom">
+                <input type="text" name="prenom" placeholder="Prénom" value="<?php echo isset($_POST['prenom']) ? htmlspecialchars($_POST['prenom']) : '' ?>">
             </label>
             </div>
 
             <div class="group-from">
             <label>
-                <input type="text" name="nom" placeholder="Nom">
+                <input type="text" name="nom" placeholder="Nom" value="<?php echo isset($_POST['nom']) ? htmlspecialchars($_POST['nom']) : '' ?>">
             </label>
             </div>
 
             <div class="group-from">
                 <label>
-                    <input type="text" name="username" placeholder="Nom d'utilisateur">
+                    <input type="text" name="username" placeholder="Nom d'utilisateur" value="<?php echo isset($_POST['username']) ? htmlspecialchars($_POST['username']) : '' ?>">
                 </label>
             </div>
 
             <div class="group-from">
             <label>
-                <input type="text" name="e-mail" placeholder="E-mail">
+                <input type="text" name="email" placeholder="E-mail" value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : '' ?>">
             </label>
             </div>
 
             <div class="group-from">
             <label>
-                <input type="password" name="mdp" placeholder="mot de passe">
+                <input type="password" name="password" placeholder="Mot de passe">
             </label>
             </div>
 
