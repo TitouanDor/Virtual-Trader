@@ -1,13 +1,13 @@
 <?php
 session_start();
 
-// Check if the user is logged in
+// Connection BDD
 if (!isset($_SESSION['id'])) {
     header('location: index.html');
     exit();
 }
 
-// Database connection
+// Connection BDD
 $dbHost = 'localhost';
 $dbName = 'virtual_trader';
 $dbUser = 'root';
@@ -20,12 +20,12 @@ try {
     die("Database error: " . $e->getMessage());
 }
 
-// Fetch all actions
+// Recup toutes les actions
 $actionsReq = $bdd->prepare("SELECT id, nom, description, prix FROM actions");
 $actionsReq->execute();
 $actions = $actionsReq->fetchAll();
 
-// Fetch historical prices for each action
+// Recup prix historiques des actions
 foreach ($actions as &$action) {
     $actionId = $action['id'];
     $historicalPricesReq = $bdd->prepare("SELECT game_month, game_year, valeur_action FROM cours_marche WHERE action_id = ? ORDER BY game_year DESC, game_month DESC LIMIT 12");
@@ -58,10 +58,10 @@ foreach ($actions as &$action) {
                     <label for="quantity">Quantity:</label>
                     <input type="number" id="quantity" name="quantity" value="1" min="1">
                     <input type="hidden" name="action" value="Buy">
-                    <button type="submit">Buy</button>
+                    <button type="submit">Acheter</button>
                     
                     <input type="hidden" name="action" value="Sell">
-                    <button type="submit">Sell</button>
+                    <button type="submit">Vendre</button>
                 </form>
             </li>
         <?php endforeach; ?>

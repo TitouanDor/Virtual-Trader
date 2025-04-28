@@ -1,9 +1,6 @@
 <?php
 session_start();
 
-
-
-
 // Database connection
 $dbHost = 'localhost';
 $dbName = 'virtual_trader';
@@ -47,7 +44,7 @@ if ($isFollowing){
     $followButtonValue = "Unfollow";
 }
 if ($userId == $playerId){
-    $followButtonValue = "It's you";
+    $followButtonValue = "joueur";
 }
 
 
@@ -66,8 +63,8 @@ $history = $historyReq->fetchAll();
 </head>
 <body>
 <h1>Profil de <?php echo htmlspecialchars($player['username']);
- if($followButtonValue == "It's you"){
-    echo " (it's you)";
+ if($followButtonValue == "joueur"){
+    echo " (C'est vous!)";
  }?></h1>
 
 <p>Nom: <?php echo htmlspecialchars($player['nom']); ?></p>
@@ -94,7 +91,7 @@ $history = $historyReq->fetchAll();
 <?php endif; ?>
 <a href="profil.php">Retourner à mon profil</a>
 <br>
-<a href="leaderboard.php">Classement</a>
+<a href="classement.php">Classement</a>
 
 </body>
 </html>

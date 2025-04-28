@@ -9,6 +9,3 @@ Phase 4: Profile Reset
         *   Reset balance.
         *   Reset portfolio.
         *   Leave market and game date unchanged.
-
-
-        
