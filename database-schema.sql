@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS historique (
     action_id INT NOT NULL,
     joueur_id INT ,
     prix DECIMAL(10, 2) NOT NULL,
-    nature VARCHAR(10) NOT NULL,
+    nature VARCHAR(32) NOT NULL,
     game_month INT NOT NULL,
     game_year INT NOT NULL,
     real_date DATETIME DEFAULT CURRENT_TIMESTAMP,

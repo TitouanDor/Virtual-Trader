@@ -1,4 +1,3 @@
-php
 <?php
 session_start();
 
@@ -67,6 +66,6 @@ foreach ($actions as &$action) {
             </li>
         <?php endforeach; ?>
     </ul>
-    <a href="profil.php">Return to my profil</a>    
+    <a href="profil.php">Retourner au Profil</a>
 </body>
 </html>

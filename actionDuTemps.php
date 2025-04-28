@@ -70,7 +70,7 @@ foreach ($actions as $action) {
 
     //add to the history
     $reqHistory = $bdd->prepare("INSERT INTO historique (action_id, joueur_id, prix, nature, game_month, game_year) VALUES (?,?,?,?,?,?)");
-    $reqHistory->execute([$actionId, NULL, $newPrice, 'changement_prix', $currentMonth, $currentYear]);
+    $reqHistory->execute([$actionId, NULL, $newPrice, 'change_prix', $currentMonth, $currentYear]);
 
 }
 //distribute dividend if it's time

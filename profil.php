@@ -138,7 +138,7 @@ if(isset($_SESSION["error"])){
         <p>Vous n'avez pas encore investi dans des actions.</p>
 <?php endif; ?>
     <h2>Rechercher des joueurs</h2>
-<form action="searchPlayerScript.php" method="post">
+<form action="chercherJoueurScript.php" method="post">
         <input type="text" name="search" placeholder="e-mail/username">
         <input type="submit" value="Rechercher">
 </form>
@@ -181,15 +181,15 @@ if(isset($_SESSION["error"])){
     <h2>Players followed by you</h2>
     <ul>
         <?php foreach ($followedPlayers as $followedPlayer): ?>
-            <li><a href="playerProfil.php?id=<?php echo $followedPlayer['id']; ?>"><?php echo htmlspecialchars($followedPlayer['username']); ?></a></li>
+            <li><a href="profilJoueur.php?id=<?php echo $followedPlayer['id']; ?>"><?php echo htmlspecialchars($followedPlayer['username']); ?></a></li>
         <?php endforeach; ?>
     </ul>
 <?php else: ?>
     <p>You are not following anyone.</p>
 <?php endif; ?>
-    <a href="passwordRecovery.php">Change Password</a>    
+    <a href="changerMDP.php">Change Password</a>
     <br>
-    <a href="actionMarket.php">Marché</a>
+    <a href="Marche.php">Marché</a>
     <br>
     <a href="leaderboard.php?from=profil">Classement</a>    
     <br>
