@@ -14,3 +14,18 @@ body{
     /*background-color: gray;*/
     box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
 }
+
+.titre{
+    height: fit-content;
+    color: white;
+    border: black solid 1px;
+    width: fit-content;
+    border-radius: 5px;
+    text-align: center;
+    padding: 3px;
+    margin: auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    background-image: url("../image/title_background.jpg");
+    font-size: 20px;
+}

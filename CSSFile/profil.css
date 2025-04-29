@@ -1,3 +1,10 @@
+.container{
+    display: flex; /* Active Flexbox */
+    gap: 10px; /* Espacement entre les divs */
+    margin: auto;
+    justify-content: center;
+}
+
 .box_profil{
     background-color: white;
     border: 2px solid gray;
@@ -31,26 +38,30 @@
     margin-bottom: 10px;
 }
 
-
 .box_profil p{
     border: 1px solid gray;
     border-radius: 5px;
     padding: 3px;
-
 }
 
-.titre{
-    height: fit-content;
-    color: white;
-    border: black solid 1px;
-    width: fit-content;
-    border-radius: 5px;
-    text-align: center;
-    padding: 3px;
-    margin: auto;
-    margin-top: 10px;
-    margin-bottom: 10px;
-    background-image: url("../image/title_background.jpg");
-    font-size: 20px;
+.box_recherche_joueur li{
+    font-weight: bold;
+}
 
+.banniere{
+    display: flex; /* Active Flexbox */
+    gap: 50px; /* Espacement entre les divs */
+    justify-content: center;
+    position: fixed; /* Position fixe par rapport à la fenêtre */
+    bottom: 0; /* Ancre en bas de la fenêtre */
+    left: 0;
+    right: 0;
+    background-color: black;
+    padding: 10px;
+    color: white;
+}
+
+.banniere a:link, a:visited, a:hover, a:active {
+    color: inherit; /* Utilise la couleur du texte parent */
+    text-decoration: none; /* Supprime le soulignement par défaut */
 }

@@ -55,6 +55,9 @@ if(isset($_SESSION["error"])){
 </head>
 <body>
     <div class="bandeau">Bienvenue sur votre profil</div>
+
+    <div class="container">
+
     <div class="box_profil">
         <div class="titre">Informations</div>
 
@@ -131,8 +134,9 @@ if(isset($_SESSION["error"])){
         <p>Vous ne suivez personne.</p>
     <?php endif; ?>
     </div>
+    </div>
 
-    <div>
+    <div class="banniere">
         <a href="changerMDP.php">Changer mot de passe</a>
         <br>
         <a href="Marche.php">Marché</a>
