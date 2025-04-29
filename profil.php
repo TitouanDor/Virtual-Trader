@@ -79,7 +79,7 @@ if(isset($_SESSION["error"])){
     </div>
 
     <div class="box_recherche_joueur">
-    <h2>Rechercher des joueurs</h2>
+    <div class="titre">Rechercher des joueurs</div>
     <form action="chercherJoueurScript.php" method="post">
             <input type="text" name="search" placeholder="e-mail/username">
             <input type="submit" value="Rechercher">
