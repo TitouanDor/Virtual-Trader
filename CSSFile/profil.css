@@ -1,0 +1,72 @@
+body{
+    background-color: lightgray;
+    font-family: "Comic Sans MS";
+}
+
+.bandeau{
+    border: 2px solid gray;
+    color: white;
+    border-radius: 5px;
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: 60px;
+    padding: 10px;
+
+    background-image: url("../image/title_background.jpg");
+}
+
+.box_profil{
+    background-color: white;
+    border: 2px solid gray;
+    border-radius: 5px;
+    height: fit-content;
+    width: fit-content;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-bottom: 10px;
+}
+
+.box_action{
+    background-color: white;
+    border: 2px solid gray;
+    border-radius: 5px;
+    height: fit-content;
+    width: fit-content;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-bottom: 10px;
+}
+
+.box_recherche_joueur{
+    background-color: white;
+    border: 2px solid gray;
+    border-radius: 5px;
+    height: fit-content;
+    width: fit-content;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-bottom: 10px;
+}
+
+
+.box_profil p{
+    border: 1px solid gray;
+    border-radius: 5px;
+    padding: 3px;
+
+}
+
+.titre{
+    height: fit-content;
+    color: white;
+    width: fit-content;
+    border: black solid 1px;
+    border-radius: 5px;
+    text-align: center;
+    padding: 3px;
+    margin: auto;
+    margin-top: 10px;
+    background-image: url("../image/title_background.jpg");
+    font-size: 20px;
+
+}

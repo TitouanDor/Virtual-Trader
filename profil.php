@@ -53,8 +53,9 @@ if(isset($_SESSION["error"])){
     <link rel="stylesheet" href="CSSFile/profil.css">
 </head>
 <body>
-    <h1>Bienvenue sur votre profil</h1>
+    <div class="bandeau">Bienvenue sur votre profil</div>
     <div class="box_profil">
+        <div class="titre">Informations</div>
 
     <?php if ($user): ?>
         <p>Nom: <?php echo htmlspecialchars($user['nom']); ?></p>
@@ -63,8 +64,9 @@ if(isset($_SESSION["error"])){
         <p>Solde: <?php echo htmlspecialchars($user['argent']); ?></p>
     <?php endif; ?>
     </div>
+
     <div class="box_action">
-        <h2>Vos Actions</h2>
+        <div class="titre">Vos Actions</div>
     <?php if ($investedActions): ?>
     <ul>
         <?php foreach ($investedActions as $action): ?>
