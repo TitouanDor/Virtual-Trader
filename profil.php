@@ -50,6 +50,7 @@ if(isset($_SESSION["error"])){
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mon profil</title>
+    <link rel="stylesheet" href="CSSFile/general.css">
     <link rel="stylesheet" href="CSSFile/profil.css">
 </head>
 <body>

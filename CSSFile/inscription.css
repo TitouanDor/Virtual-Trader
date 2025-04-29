@@ -21,7 +21,6 @@ body{
     background-position: center; /* Centre l'image */
     background-repeat: no-repeat; /* Empêche la répétition de l'image */
     overflow: hidden;
-    font-family: "Arial";
 }
 
 .group-from{
