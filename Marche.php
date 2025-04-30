@@ -49,7 +49,7 @@ foreach ($actions as &$action) {
     <div class="bandeau">Marché</div>
     <div class="groupeAction">
         <?php foreach ($actions as $action): ?>
-            <li>
+            <div class="action">
                 <form action="buySellScript.php" method="POST" name="form_<?php echo $action['id']?>">
                     <h2><?php echo htmlspecialchars($action['nom']); ?></h2>
                     <p><?php echo htmlspecialchars($action['description']); ?></p>
@@ -59,13 +59,18 @@ foreach ($actions as &$action) {
                         <li><?php echo htmlspecialchars($historicalPrice['game_month']."/".$historicalPrice['game_year'].": ".$historicalPrice['valeur_action']); ?></li><?php endforeach; ?>
                     </ul>                
                     <input type="hidden" name="action_id" value="<?php echo $action['id']; ?>">
-                    <label for="quantity">Quantity:</label>
-                    <input type="number" id="quantity" name="quantity" value="1" min="1">
-
-                    <button type="submit" name="action" value="Acheter">Acheter</button>
-                    <button type="submit" name="action" value="Vendre">Vendre</button>
+                    <div class="achat">
+                        <div>
+                            <label for="quantity">Quantity:</label>
+                            <input type="number" id="quantity" name="quantity" value="1" min="1">
+                        </div>
+                        <div class="boutonCentrer">
+                            <button type="submit" name="action" value="Acheter">Acheter</button>
+                            <button type="submit" name="action" value="Vendre">Vendre</button>
+                        </div>
+                    </div>
                 </form>
-            </li>
+            </div>
         <?php endforeach; ?>
     </div>
 
