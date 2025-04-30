@@ -41,13 +41,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recover Password</title>
 </head>
 <body>
+<div>
+    <a href="profil.php">
+        <button>
+            Retour
+        </button>
+    </a>
+</div>
     <h1>Recover Password</h1>
     <?php if (isset($error)): ?>
         <p style="color: red;"><?php echo $error; ?></p>
