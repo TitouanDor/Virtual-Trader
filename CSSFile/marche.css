@@ -1,0 +1,24 @@
+.action{
+    background-color: white;
+    border: black solid 1px;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+.groupeAction{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 colonnes de largeur égale */
+    gap: 20px;
+}
+
+.achat{
+    display: flex;
+    flex-direction: column; /* Dispose les éléments en colonne */
+    align-items: center; /* Centre les éléments horizontalement */
+    gap: 10px; /* Espacement entre les éléments */
+}
+
+.boutonAchat{
+    display: flex;
+    gap: 30px;
+}
