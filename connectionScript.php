@@ -26,4 +26,8 @@ if (!empty($_POST['email']) && !empty($_POST['mdp'])) { // Si les champs email e
         exit();
     }
 }
+else {
+    header('Location: index.html');
+    exit();
+}
 ?>
