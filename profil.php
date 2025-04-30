@@ -97,40 +97,6 @@ if(isset($_SESSION["error"])){
             </form>
         </div>
 
-
-    <?php //if(isset($searchResult)):?>
-    <!--    <p>Username: --><?php //echo $searchResult["username"] ?><!--</p>-->
-    <!--    <p>Email: --><?php //echo $searchResult["email"] ?><!--</p>-->
-    <!--    <p>Solde: --><?php //echo $searchResult["argent"] ?><!--</p>-->
-    <!--    --><?php
-    //    // Check if the user is already following the searched user
-    //    $isFollowingReq = $bdd->prepare("SELECT * FROM followers WHERE user_id = ? AND followed_user_id = ?");
-    //    $isFollowingReq->execute([$_SESSION['id'], $searchResult['id']]);
-    //    $isFollowing = $isFollowingReq->fetch();
-    //    ?>
-    <!--    <form action="followScript.php" method="post">-->
-    <!--        <input type="hidden" name="followed_user_id" value="--><?php //echo $searchResult["id"]; ?><!--">-->
-    <!--        --><?php //if ($isFollowing): ?>
-    <!--            <input type="submit" name="follow" value="Unfollow">-->
-    <!--        --><?php //else: ?>
-    <!--            <input type="submit" name="follow" value="Follow">-->
-    <!--        --><?php //endif; ?>
-    <!--    </form>-->
-    <!--    --><?php
-    //    // End of Check
-    //    ?>
-    <!--    <h2>Actions de ce joueur</h2>-->
-    <!---->
-    <!---->
-    <?php //if ($investedActionsOfPlayer): ?>
-    <!--    <ul>-->
-    <!--        --><?php //foreach ($investedActionsOfPlayer as $action): ?>
-    <!--                <li>--><?php //echo htmlspecialchars($action['nom']); ?><!-- (Quantité: --><?php //echo htmlspecialchars($action['quantite']); ?><!--)</li>-->
-    <!--        --><?php //endforeach; ?>
-    <!--    </ul>-->
-    <?php //endif; ?>
-    <?php //elseif (isset($error)): echo "<p>".$error."</p>"; endif;?>
-
     <?php if ($followedPlayers): ?>
         <h2>Joueurs que vous suivez</h2>
         <ul>
@@ -142,7 +108,7 @@ if(isset($_SESSION["error"])){
         <p>Vous ne suivez personne.</p>
     <?php endif; ?>
     </div>
-    </div>
+
 
     <div class="banniere">
         <a href="changerMDP.php">Changer mot de passe</a>

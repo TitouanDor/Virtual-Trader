@@ -12,7 +12,7 @@ $bdd = new PDO('mysql:host=localhost;dbname=virtual_trader;charset=utf8', 'root'
 $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 // Recup data pour classement
-$leaderboardReq = $bdd->prepare("SELECT username, argent FROM joueur ORDER BY argent DESC");
+$leaderboardReq = $bdd->prepare("SELECT id, username, argent FROM joueur ORDER BY argent DESC");
 $leaderboardReq->execute();
 $leaderboard = $leaderboardReq->fetchAll();
 
@@ -53,7 +53,7 @@ if ($from === 'index') {
             <tbody>
                 <?php foreach ($leaderboard as $player): ?>
                     <tr>
-                        <td><?php echo htmlspecialchars($player['username']); ?></td>
+                        <td><a href="profilJoueur.php?id=<?php echo $player['id']; ?>"><?php echo htmlspecialchars($player['username']); ?></a></td>
                         <td><?php echo htmlspecialchars($player['argent']); ?></td>
                     </tr>
                 <?php endforeach; ?>
