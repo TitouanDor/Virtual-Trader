@@ -1,5 +1,4 @@
     *   Implement buy/sell functionality.
-    *   Implement search/filter for stocks.
 
 Phase 4: Profile Reset
 
