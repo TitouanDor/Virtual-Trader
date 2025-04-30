@@ -112,11 +112,8 @@ if(isset($_SESSION["error"])){
 
     <div class="banniere">
         <a href="changerMDP.php">Changer mot de passe</a>
-        <br>
         <a href="Marche.php">Marché</a>
-        <br>
         <a href="classement.php?from=profil">Classement</a>
-        <br>
         <a href="logout.php">Déconnexion</a>
     </div>
 </body>

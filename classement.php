@@ -63,11 +63,8 @@ if ($from === 'index') {
 
 <div class="banniere">
     <a href="changerMDP.php">Changer mot de passe</a>
-    <br>
     <a href="Marche.php">Marché</a>
-    <br>
     <a href="profil.php">Profil</a>
-    <br>
     <a href="logout.php">Déconnexion</a>
 </div>
 
