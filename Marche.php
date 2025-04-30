@@ -41,6 +41,8 @@ foreach ($actions as &$action) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="CSSFile/general.css">
+    <link rel="stylesheet" href="CSSFile/marche.css">
     <title>Marché</title>
 </head>
 <body>
@@ -68,6 +70,10 @@ foreach ($actions as &$action) {
             </li>
         <?php endforeach; ?>
     </ul>
-    <a href="profil.php">Retourner au Profil</a>
+    <div class="banniere">
+        <a href="profil.php">Profil</a>
+        <a href="classement.php?from=profil">Classement</a>
+        <a href="logout.php">Déconnexion</a>
+    </div>
 </body>
 </html>
