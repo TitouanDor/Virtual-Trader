@@ -15,7 +15,7 @@
 </div>
     <div name="box_inscription" class="box_inscription">
         <p>Inscription à Virtual-trader</p>
-        <form action="inscriptionScript.php" method="post">
+        <form action="inscriptionScript.php" method="POST">
             <div class="group-from">
             <label>
                 <input type="text" name="prenom" placeholder="Prénom">

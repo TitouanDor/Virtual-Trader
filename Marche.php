@@ -53,11 +53,9 @@ foreach ($actions as &$action) {
                     <input type="hidden" name="action_id" value="<?php echo $action['id']; ?>">
                     <label for="quantity">Quantity:</label>
                     <input type="number" id="quantity" name="quantity" value="1" min="1">
-                    <input type="hidden" name="action" value="Buy">
-                    <button type="submit">Acheter</button>
-                    
-                    <input type="hidden" name="action" value="Sell">
-                    <button type="submit">Vendre</button>
+
+                    <button type="submit" name="action" value="Acheter">Acheter</button>
+                    <button type="submit" name="action" value="Vendre">Vendre</button>
                 </form>
             </li>
         <?php endforeach; ?>
