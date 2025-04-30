@@ -83,8 +83,8 @@ $Portefeuille = $PortefeuilleReq->fetch();
     }
 
     //MAJ de l'argent du joueur
-    $MAJ_Joueur = $bdd->prepare("UPDATE joueur SET argent = ?");
-    $MAJ_Joueur->execute([$nouv_arg_joueur]);
+    $MAJ_Joueur = $bdd->prepare("UPDATE joueur SET argent = ? WHERE id = ?");
+    $MAJ_Joueur->execute([$nouv_arg_joueur, $_SESSION['id']]);
 
     //MAJ de l'historique du jeu
     $HistoriqueReq = $bdd->prepare("INSERT INTO historique (action_id, joueur_id, prix, nature, quantite, game_month, game_year) VALUES (?, ?, ?, ?, ?, ?, ?) ");
