@@ -26,3 +26,12 @@ body{
 .group-from{
     margin-bottom: 9px;
 }
+
+.box_erreur{
+    color: red;
+    font-weight: bold;
+    border-radius: 3px;
+    text-align: center;
+    margin: auto;
+    margin-bottom: 9px;
+}

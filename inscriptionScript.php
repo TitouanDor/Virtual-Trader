@@ -1,5 +1,6 @@
 <?php
 
+session_start();
 // Connexion à la base de données
 $bdd = new PDO('mysql:host=localhost;dbname=virtual_trader;charset=utf8', 'root', ''); 
 
@@ -20,8 +21,9 @@ if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
 $verificationReq = $bdd->prepare("SELECT COUNT(*) as count FROM joueur WHERE email = ? OR username = ?");
 $verificationReq->execute([$email, $nomUtilisateur]);
 $verification = $verificationReq->fetch();
-if ($verification['count'] != 0) {
+if ($verification['count'] > 0) {
     header('Location: inscription.php');
+    $_SESSION["error"] = 1;
     exit();
 }
 
@@ -29,7 +31,7 @@ if ($verification['count'] != 0) {
 $insertionReq = $bdd->prepare("INSERT INTO joueur (nom, prenom, email, username, mdp) VALUES (?, ?, ?, ?, ?)");
 $insertionReq->execute([$nom, $prenom, $email, $nomUtilisateur, $mdp]);
 
-session_start();
+
 $_SESSION['success'] = "Compte créé avec succès ! Vous pouvez maintenant vous connecter";
 header('Location: index.html');
 exit();
