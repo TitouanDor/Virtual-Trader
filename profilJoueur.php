@@ -55,6 +55,8 @@ $history = $historyReq->fetchAll();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="CSSFile/general.css">
+    <link rel="stylesheet" href="CSSFile/profil_joueur.css">
     <title>Profil du joueur</title>
 </head>
 <body>
@@ -85,9 +87,13 @@ $history = $historyReq->fetchAll();
 <?php else: ?>
     <p>Aucune action trouvée pour ce joueur.</p>
 <?php endif; ?>
-<a href="profil.php">Retourner à mon profil</a>
-<br>
-<a href="classement.php">Classement</a>
+<div class="banniere">
+    <a href="changerMDP.php">Changer mot de passe</a>
+    <a href="profil.php">Profil</a>
+    <a href="Marche.php">Marché</a>
+    <a href="classement.php?from=profil">Classement</a>
+    <a href="logout.php">Déconnexion</a>
+</div>
 
 </body>
 </html>
