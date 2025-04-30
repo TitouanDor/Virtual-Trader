@@ -1,4 +1,5 @@
 <?php
+session_start();
 
 // Connection BDD
 try {
@@ -49,11 +50,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 <body>
 <div>
-    <a href="profil.php">
-        <button>
-            Retour
-        </button>
-    </a>
+    <?php if (isset($_SESSION["id"])):?>
+        <a href="profil.php">
+            <button>
+                Retour
+            </button>
+        </a>
+    <?php else:?>
+        <a href="index.html">
+            <button>
+                Retour
+            </button>
+        </a>
+    <?php endif;?>
 </div>
     <h1>Recover Password</h1>
     <?php if (isset($error)): ?>
