@@ -31,9 +31,10 @@ body{
 }
 
 .banniere{
+    height: 35px;
+    justify-content: center;
     display: flex; /* Active Flexbox */
     gap: 50px; /* Espacement entre les divs */
-    justify-content: center;
     position: fixed; /* Position fixe par rapport à la fenêtre */
     bottom: 0; /* Ancre en bas de la fenêtre */
     left: 0;
@@ -41,6 +42,7 @@ body{
     background-color: black;
     padding: 10px;
     color: white;
+    align-items: center; /* Centre les éléments verticalement */
 }
 
 .banniere a:link, a:visited, a:hover, a:active {
