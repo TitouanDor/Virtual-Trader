@@ -17,3 +17,8 @@
     align-items: center; /* Centre les éléments horizontalement */
     gap: 10px; /* Espacement entre les éléments */
 }
+
+.boutonAchat{
+    display: flex;
+    gap: 30px;
+}

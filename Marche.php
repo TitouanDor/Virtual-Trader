@@ -64,7 +64,7 @@ foreach ($actions as &$action) {
                             <label for="quantity">Quantity:</label>
                             <input type="number" id="quantity" name="quantity" value="1" min="1">
                         </div>
-                        <div class="boutonCentrer">
+                        <div class="boutonAchat">
                             <button type="submit" name="action" value="Acheter">Acheter</button>
                             <button type="submit" name="action" value="Vendre">Vendre</button>
                         </div>
