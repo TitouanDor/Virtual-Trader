@@ -64,6 +64,12 @@ if(isset($_SESSION["error"])){
 
     <div class="box_action">
         <div class="titre">Vos Actions</div>
+            <div class="boutonCentrer">
+                <form action="marche.php" method="post" >
+                    <input type="text" name="searchAction" placeholder="nom entreprise">
+                    <input type="submit" value="Rechercher">
+                </form>
+            </div>
     <?php if ($investedActions): ?>
     <ul>
         <?php foreach ($investedActions as $action): ?>
@@ -77,11 +83,13 @@ if(isset($_SESSION["error"])){
 
     <div class="box_recherche_joueur">
     <div class="titre">Rechercher des joueurs</div>
-    <form action="chercherJoueurScript.php" method="post">
-            <input type="text" name="search" placeholder="e-mail/username">
-            <input type="submit" value="Rechercher">
-    </form>
 
+        <div class="boutonCentrer">
+            <form action="chercherJoueurScript.php" method="post" >
+                    <input type="text" name="search" placeholder="e-mail/username">
+                    <input type="submit" value="Rechercher">
+            </form>
+        </div>
 
     <?php if ($followedPlayers): ?>
         <h2>Joueurs que vous suivez</h2>
@@ -94,15 +102,12 @@ if(isset($_SESSION["error"])){
         <p>Vous ne suivez personne.</p>
     <?php endif; ?>
     </div>
-    </div>
+
 
     <div class="banniere">
         <a href="changerMDP.php">Changer mot de passe</a>
-        <br>
         <a href="Marche.php">Marché</a>
-        <br>
         <a href="classement.php?from=profil">Classement</a>
-        <br>
         <a href="logout.php">Déconnexion</a>
     </div>
 </body>

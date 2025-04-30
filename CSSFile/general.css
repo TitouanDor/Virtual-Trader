@@ -29,3 +29,21 @@ body{
     background-image: url("../image/title_background.jpg");
     font-size: 20px;
 }
+
+.banniere{
+    display: flex; /* Active Flexbox */
+    gap: 50px; /* Espacement entre les divs */
+    justify-content: center;
+    position: fixed; /* Position fixe par rapport à la fenêtre */
+    bottom: 0; /* Ancre en bas de la fenêtre */
+    left: 0;
+    right: 0;
+    background-color: black;
+    padding: 10px;
+    color: white;
+}
+
+.banniere a:link, a:visited, a:hover, a:active {
+    color: inherit; /* Utilise la couleur du texte parent */
+    text-decoration: none; /* Supprime le soulignement par défaut */
+}

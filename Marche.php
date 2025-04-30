@@ -16,10 +16,16 @@ try {
     die("Database error: " . $e->getMessage());
 }
 
-// Recup toutes les actions
-$actionsReq = $bdd->prepare("SELECT id, nom, description, prix FROM actions");
-$actionsReq->execute();
-$actions = $actionsReq->fetchAll();
+
+if (($_SERVER["REQUEST_METHOD"] == "POST") && !(empty($_POST['searchAction']))) { //cherche l'action chercher
+    $actionsReq = $bdd->prepare("SELECT id, nom, description, prix FROM actions WHERE nom = ?");
+    $actionsReq->execute([$_POST["searchAction"]]);
+    $actions = $actionsReq->fetchAll();
+} else{ // Recup toutes les actions
+    $actionsReq = $bdd->prepare("SELECT id, nom, description, prix FROM actions");
+    $actionsReq->execute();
+    $actions = $actionsReq->fetchAll();
+}
 
 // Recup prix historiques des actions
 foreach ($actions as &$action) {
@@ -35,6 +41,8 @@ foreach ($actions as &$action) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="CSSFile/general.css">
+    <link rel="stylesheet" href="CSSFile/marche.css">
     <title>Marché</title>
 </head>
 <body>
@@ -60,6 +68,10 @@ foreach ($actions as &$action) {
             </li>
         <?php endforeach; ?>
     </ul>
-    <a href="profil.php">Retourner au Profil</a>
+    <div class="banniere">
+        <a href="profil.php">Profil</a>
+        <a href="classement.php?from=profil">Classement</a>
+        <a href="logout.php">Déconnexion</a>
+    </div>
 </body>
 </html>
