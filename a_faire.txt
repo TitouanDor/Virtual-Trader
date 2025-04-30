@@ -1,5 +1,6 @@
 
- Bouton 'Retour au marché' sur la page buySellScript quand pas assez d'argent (ligne 47).
+ Bouton 'Retour au marché' sur la page buySellScript quand pas assez d'argent (ligne 54).
+ Bouton 'Pas d'actions cette entreprise' sur la page buySellScript quand pas assez d'argent (ligne 86).
 valeur aléatoir prix chaque mois
 
 Phase 4: Profile Reset

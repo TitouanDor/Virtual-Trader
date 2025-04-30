@@ -73,11 +73,18 @@ $Portefeuille = $PortefeuilleReq->fetch();
         //Regarder si le portefeuille contient déjà l'action ou non et update en conséquence
         if($Portefeuille) {
             $nouvQtitPortef = $Portefeuille['quantite'] - $quantite;
-            $PortefeuilleMAJ = $bdd->prepare("UPDATE portefeuille SET quantite = ? WHERE action_id = ?");
-            $PortefeuilleMAJ->execute([$nouvQtitPortef, $action_id]);
+            if($nouvQtitPortef <= 0) {
+                $PortefeuilleMAJ = $bdd->prepare("DELETE FROM portefeuille WHERE action_id = ?");
+                $PortefeuilleMAJ->execute([$action_id]);
+            }
+            else {
+                $PortefeuilleMAJ = $bdd->prepare("UPDATE portefeuille SET quantite = ? WHERE action_id = ?");
+                $PortefeuilleMAJ->execute([$nouvQtitPortef, $action_id]);
+            }
         }
         else {
             echo "Vous n'avez pas assez d'action de cette entreprise";
+            exit();
         }
 
     }
