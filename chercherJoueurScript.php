@@ -21,6 +21,10 @@ try {
         exit();
     }
 
+    header('location: profil.php');
+    exit();
+
+
 } catch (PDOException $e) {
     $_SESSION['error'] = "Database error: " . $e->getMessage();
     header('location: profil.php');

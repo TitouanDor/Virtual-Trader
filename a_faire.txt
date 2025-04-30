@@ -1,4 +1,6 @@
-    *   Implement buy/sell functionality.
+
+ Bouton 'Retour au marché' sur la page buySellScript quand pas assez d'argent (ligne 47).
+valeur aléatoir prix chaque mois
 
 Phase 4: Profile Reset
 
