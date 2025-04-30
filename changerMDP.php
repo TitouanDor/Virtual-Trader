@@ -61,7 +61,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <label for="user_identifier">Username or Email:</label><br><input type="text" id="user_identifier" name="user_identifier" required><br><br>
             <label for="new_password">New Password:</label><br><input type="password" id="new_password" name="new_password" required><br><br>
             <label for="confirm_password">Confirm New Password:</label><br><input type="password" id="confirm_password" name="confirm_password" required><br><br>
-            <input type="submit" value="Update Password">
+            <input type="submit" value="Changer mot de passe">
             <?php if (isset($error)): ?>
                 <p style="color: red;"><?php echo $error; ?></p>
             <?php endif; ?>
