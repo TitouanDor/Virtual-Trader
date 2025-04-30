@@ -34,10 +34,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             header("Location: index.html");
             exit();
         } else {
-            $error = "Passwords do not match.";
+            $error = "Mot de passe incorrect.";
         }
     } else {
-        $error = "User not found.";
+        $error = "Utilisateur n'existe pas.";
     }
 }
 ?>
@@ -51,30 +51,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <title>Recover Password</title>
 </head>
 <body>
-<div>
-    <?php if (isset($_SESSION["id"])):?>
-        <a href="profil.php">
-            <button>
-                Retour
-            </button>
-        </a>
-    <?php else:?>
-        <a href="index.html">
-            <button>
-                Retour
-            </button>
-        </a>
-    <?php endif;?>
-</div>
-    <h1>Recover Password</h1>
-    <?php if (isset($error)): ?>
-        <p style="color: red;"><?php echo $error; ?></p>
-    <?php endif; ?>
-    <form method="POST" action="">
-        <label for="user_identifier">Username or Email:</label><br><input type="text" id="user_identifier" name="user_identifier" required><br><br>
-        <label for="new_password">New Password:</label><br><input type="password" id="new_password" name="new_password" required><br><br>
-        <label for="confirm_password">Confirm New Password:</label><br><input type="password" id="confirm_password" name="confirm_password" required><br><br>
-        <input type="submit" value="Update Password">
-    </form>
+<div class="bandeau">Recover Password</div>
+
+
+
+
+    <div class="box_mdp">
+        <form method="POST" action="">
+            <label for="user_identifier">Username or Email:</label><br><input type="text" id="user_identifier" name="user_identifier" required><br><br>
+            <label for="new_password">New Password:</label><br><input type="password" id="new_password" name="new_password" required><br><br>
+            <label for="confirm_password">Confirm New Password:</label><br><input type="password" id="confirm_password" name="confirm_password" required><br><br>
+            <input type="submit" value="Update Password">
+            <?php if (isset($error)): ?>
+                <p style="color: red;"><?php echo $error; ?></p>
+            <?php endif; ?>
+        </form>
+    </div>
+
+    <div class="banniere">
+        <a href="profil.php">Profil</a>
+        <a href="logout.php">Déconnexion</a>
+    </div>
 </body>
 </html>
