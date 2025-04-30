@@ -20,6 +20,10 @@ if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
 $verificationReq = $bdd->prepare("SELECT COUNT(*) as count FROM joueur WHERE email = ? OR username = ?");
 $verificationReq->execute([$email, $nomUtilisateur]);
 $verification = $verificationReq->fetch();
+if ($verification['count'] != 0) {
+    header('Location: inscription.php');
+    exit();
+}
 
 // Insertion du nouvel utilisateur
 $insertionReq = $bdd->prepare("INSERT INTO joueur (nom, prenom, email, username, mdp) VALUES (?, ?, ?, ?, ?)");
