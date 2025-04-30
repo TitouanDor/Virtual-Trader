@@ -56,37 +56,43 @@ $history = $historyReq->fetchAll();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="CSSFile/general.css">
-    <link rel="stylesheet" href="CSSFile/profil_joueur.css">
+    <link rel="stylesheet" href="CSSFile/profil.css">
     <title>Profil du joueur</title>
 </head>
 <body>
-<h1>Profil de <?php echo htmlspecialchars($player['username']);
+<div class="bandeau">Profil de <?php echo htmlspecialchars($player['username']);
  if($followButtonValue == "joueur"){
     echo " (C'est vous!)";
- }?></h1>
+ }?></div>
 
-<p>Nom: <?php echo htmlspecialchars($player['nom']); ?></p>
-<p>Prénom: <?php echo htmlspecialchars($player['prenom']); ?></p>
-<p>Solde: <?php echo htmlspecialchars($player['argent']); ?></p>
-<?php if ($followButtonValue != "It's you"): ?>
-<form method="POST" action="followScript.php">
-    <input type="hidden" name="followed_user_id" value="<?php echo $playerId; ?>">
-    <input type="submit" name="follow" value="<?php echo $followButtonValue?>">
-</form>
-<?php endif ?>
+<div class="container">
 
+<div class="box_profil">
+    <p class="titre">Informations</p>
+    <p>Nom: <?php echo htmlspecialchars($player['nom']); ?></p>
+    <p>Prénom: <?php echo htmlspecialchars($player['prenom']); ?></p>
+    <p>Solde: <?php echo htmlspecialchars($player['argent']); ?></p>
+    <?php if ($followButtonValue != "It's you"): ?>
+    <form method="POST" action="followScript.php">
+        <input type="hidden" name="followed_user_id" value="<?php echo $playerId; ?>">
+        <input type="submit" name="follow" value="<?php echo $followButtonValue?>">
+    </form>
+    <?php endif ?>
+</div>
 
-
-<h2>Dernières Actions</h2>
-<?php if ($history): ?>
-    <ul>
-        <?php foreach ($history as $record): ?>
-            <li><?php echo htmlspecialchars($record['real_date']); ?>: <?php echo htmlspecialchars($record['nature']); ?> de <?php echo htmlspecialchars($record['action_name']); ?> (prix : <?php echo htmlspecialchars($record['prix']); ?>)</li>
-        <?php endforeach; ?>
-    </ul>
-<?php else: ?>
-    <p>Aucune action trouvée pour ce joueur.</p>
-<?php endif; ?>
+<div class="box_action">
+    <div class="titre">Dernières Actions</div>
+        <?php if ($history): ?>
+            <ul>
+                <?php foreach ($history as $record): ?>
+                    <li><?php echo htmlspecialchars($record['real_date']); ?>: <?php echo htmlspecialchars($record['nature']); ?> de <?php echo htmlspecialchars($record['action_name']); ?> (prix : <?php echo htmlspecialchars($record['prix']); ?>)</li>
+                <?php endforeach; ?>
+            </ul>
+        <?php else: ?>
+            <p>Aucune action trouvée pour ce joueur.</p>
+        <?php endif; ?>
+    </div>
+</div>
 <div class="banniere">
     <a href="changerMDP.php">Changer mot de passe</a>
     <a href="profil.php">Profil</a>
