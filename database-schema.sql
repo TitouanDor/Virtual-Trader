@@ -28,8 +28,8 @@ CREATE TABLE IF NOT EXISTS portefeuille (
     joueur_id INT NOT NULL,
     action_id INT NOT NULL,
     quantite INT NOT NULL DEFAULT 0,
-    purchase_price DECIMAL(10, 2) NOT NULL,
-    purchase_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    prix_achat DECIMAL(10, 2) NOT NULL,
+    date_achat DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (joueur_id) REFERENCES joueur(id) ON DELETE CASCADE,
     FOREIGN KEY (action_id) REFERENCES actions(id) ON DELETE CASCADE
 
@@ -51,6 +51,7 @@ CREATE TABLE IF NOT EXISTS historique (
     joueur_id INT ,
     prix DECIMAL(10, 2) NOT NULL,
     nature VARCHAR(32) NOT NULL,
+    quantite INT ,
     game_month INT NOT NULL,
     game_year INT NOT NULL,
     real_date DATETIME DEFAULT CURRENT_TIMESTAMP,

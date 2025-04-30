@@ -49,31 +49,23 @@ foreach ($actions as &$action) {
     <div class="bandeau">Marché</div>
     <div class="groupeAction">
         <?php foreach ($actions as $action): ?>
-        <div class="action">
-                    <form action="buySellScript.php" method="POST" name="form_<?php echo $action['id']?>">
-                        <h2><?php echo htmlspecialchars($action['nom']); ?></h2>
-                        <p><?php echo htmlspecialchars($action['description']); ?></p>
-                        <p>Prix actuel: <?php echo htmlspecialchars($action['prix']); ?></p>
-                        <h3>Prix Historiques</h3>
-                        <ul><?php foreach ($action['historical_prices'] as $historicalPrice): ?>
-                            <li><?php echo htmlspecialchars($historicalPrice['game_month']."/".$historicalPrice['game_year'].": ".$historicalPrice['valeur_action']); ?></li><?php endforeach; ?>
-                        </ul>
-                        <input type="hidden" name="action_id" value="<?php echo $action['id']; ?>">
-                        <div class="achat">
-                            <div class="boutonCentrer">
-                                <label for="quantity">Quantity:</label>
-                                <input type="number" id="quantity" name="quantity" value="1" min="1">
-                            </div>
+            <li>
+                <form action="buySellScript.php" method="POST" name="form_<?php echo $action['id']?>">
+                    <h2><?php echo htmlspecialchars($action['nom']); ?></h2>
+                    <p><?php echo htmlspecialchars($action['description']); ?></p>
+                    <p>Prix actuel: <?php echo htmlspecialchars($action['prix']); ?></p>
+                    <h3>Prix Historiques</h3>
+                    <ul><?php foreach ($action['historical_prices'] as $historicalPrice): ?>
+                        <li><?php echo htmlspecialchars($historicalPrice['game_month']."/".$historicalPrice['game_year'].": ".$historicalPrice['valeur_action']); ?></li><?php endforeach; ?>
+                    </ul>                
+                    <input type="hidden" name="action_id" value="<?php echo $action['id']; ?>">
+                    <label for="quantity">Quantity:</label>
+                    <input type="number" id="quantity" name="quantity" value="1" min="1">
 
-                            <div class="boutonCentrer">
-                                <input type="hidden" name="action" value="Buy">
-                                <button type="submit">Acheter</button>
-                                <input type="hidden" name="action" value="Sell">
-                                <button type="submit">Vendre</button>
-                            </div>
-                        </div>
-                    </form>
-        </div>
+                    <button type="submit" name="action" value="Acheter">Acheter</button>
+                    <button type="submit" name="action" value="Vendre">Vendre</button>
+                </form>
+            </li>
         <?php endforeach; ?>
     </div>
 

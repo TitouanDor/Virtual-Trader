@@ -20,6 +20,7 @@ endif;
 </div>
     <div name="box_inscription" class="box_inscription">
         <p>Inscription à Virtual-trader</p>
+
         <?php if ($_SESSION["error"]==1):?>
         <div class="box_erreur">Erreur pseudo ou email déjà connue</div>
         <?php else:?>
