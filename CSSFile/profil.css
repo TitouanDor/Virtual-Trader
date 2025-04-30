@@ -65,3 +65,7 @@
     color: inherit; /* Utilise la couleur du texte parent */
     text-decoration: none; /* Supprime le soulignement par défaut */
 }
+
+.recherche{
+    margin: auto;
+}

@@ -71,6 +71,12 @@ if(isset($_SESSION["error"])){
 
     <div class="box_action">
         <div class="titre">Vos Actions</div>
+            <div class="recherche">
+                <form action="marche.php" method="post" >
+                    <input type="text" name="searchAction" placeholder="nom entreprise">
+                    <input type="submit" value="Rechercher">
+                </form>
+            </div>
     <?php if ($investedActions): ?>
     <ul>
         <?php foreach ($investedActions as $action): ?>
@@ -84,10 +90,12 @@ if(isset($_SESSION["error"])){
 
     <div class="box_recherche_joueur">
     <div class="titre">Rechercher des joueurs</div>
-    <form action="chercherJoueurScript.php" method="post">
-            <input type="text" name="search" placeholder="e-mail/username">
-            <input type="submit" value="Rechercher">
-    </form>
+        <div class="recherche">
+            <form action="chercherJoueurScript.php" method="post" >
+                    <input type="text" name="search" placeholder="e-mail/username">
+                    <input type="submit" value="Rechercher">
+            </form>
+        </div>
 
 
     <?php //if(isset($searchResult)):?>

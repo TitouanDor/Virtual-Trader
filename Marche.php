@@ -16,10 +16,16 @@ try {
     die("Database error: " . $e->getMessage());
 }
 
-// Recup toutes les actions
-$actionsReq = $bdd->prepare("SELECT id, nom, description, prix FROM actions");
-$actionsReq->execute();
-$actions = $actionsReq->fetchAll();
+
+if (($_SERVER["REQUEST_METHOD"] == "POST") && !(empty($_POST['searchAction']))) { //cherche l'action chercher
+    $actionsReq = $bdd->prepare("SELECT id, nom, description, prix FROM actions WHERE nom = ?");
+    $actionsReq->execute([$_POST["searchAction"]]);
+    $actions = $actionsReq->fetchAll();
+} else{ // Recup toutes les actions
+    $actionsReq = $bdd->prepare("SELECT id, nom, description, prix FROM actions");
+    $actionsReq->execute();
+    $actions = $actionsReq->fetchAll();
+}
 
 // Recup prix historiques des actions
 foreach ($actions as &$action) {
