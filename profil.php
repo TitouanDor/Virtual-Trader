@@ -30,20 +30,13 @@ $followedPlayersReq->execute([$_SESSION['id']]);
 $followedPlayers = $followedPlayersReq->fetchAll();
 
 
-// Recherche de joueur
-if (isset($_SESSION['search_result'])) {    
-    $searchResult = $_SESSION['search_result'];
-    $investedActionsOfPlayer = $bdd->prepare("SELECT actions.nom, portefeuille.quantite FROM portefeuille JOIN actions ON portefeuille.action_id = actions.id WHERE portefeuille.joueur_id = ?");// Récupération des actions investies
-    $investedActionsOfPlayer->execute([$searchResult["id"]]);
-    $investedActionsOfPlayer = $investedActionsOfPlayer->fetchAll();
-    unset($_SESSION['search_result']);
-}
 if(isset($_SESSION["error"])){
     $error = $_SESSION["error"];
     unset($_SESSION["error"]);
 }
 
 ?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -90,6 +83,7 @@ if(isset($_SESSION["error"])){
 
     <div class="box_recherche_joueur">
     <div class="titre">Rechercher des joueurs</div>
+
         <div class="boutonCentrer">
             <form action="chercherJoueurScript.php" method="post" >
                     <input type="text" name="search" placeholder="e-mail/username">
