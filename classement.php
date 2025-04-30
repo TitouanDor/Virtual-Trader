@@ -40,8 +40,6 @@ if ($from === 'index') {
 
 <div class="bandeau">Classement</div>
 
-<a href="<?php echo $returnLink; ?>">Retour</a>
-
 <?php if ($leaderboard): ?>
     <table>
         <thead>
@@ -62,6 +60,16 @@ if ($from === 'index') {
 <?php else: ?>
     <p>Pas d'utilisateurs trouvé.</p>
 <?php endif; ?>
+
+<div class="banniere">
+    <a href="changerMDP.php">Changer mot de passe</a>
+    <br>
+    <a href="Marche.php">Marché</a>
+    <br>
+    <a href="profil.php">Profil</a>
+    <br>
+    <a href="logout.php">Déconnexion</a>
+</div>
 
 </body>
 </html>
