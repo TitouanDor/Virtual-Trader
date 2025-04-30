@@ -39,15 +39,47 @@ try {
 
     $nouv_arg_joueur = $arg_joueur['argent'];
 
+//Recup portefeuille Joueur
+$PortefeuilleReq = $bdd->prepare("SELECT * FROM portefeuille WHERE action_id = ?");
+$PortefeuilleReq->execute([$action_id]);
+$Portefeuille = $PortefeuilleReq->fetch();
+
 
     if ($action == 'Acheter') {
+
         $nouv_arg_joueur = $arg_joueur['argent'] - $prix_total;
 
-        $PortefeuilleReq = $bdd->prepare("INSERT INTO portefeuille (joueur_id, action_id, quantite, prix_achat) VALUES (?, ?, ?, ?)");
-        $PortefeuilleReq->execute([$_SESSION['id'], $action_id, $quantite, $prix_total]);
+        //Verif si joueur assez argent pour acheter actions
+        if($nouv_arg_joueur < 1000.00) {
+            echo "Vous n'avez pas assez d'argent";
+            exit();
+        }
+
+        //Regarder si le portefeuille contient déjà l'action ou non et update en conséquence
+        if($Portefeuille) {
+            $nouvQtitPortef = $Portefeuille['quantite'] + $quantite;
+            $PortefeuilleMAJ = $bdd->prepare("UPDATE portefeuille SET quantite = ? WHERE action_id = ?");
+            $PortefeuilleMAJ->execute([$nouvQtitPortef, $action_id]);
+        }
+        else {
+            $PortefeuilleReq = $bdd->prepare("INSERT INTO portefeuille (joueur_id, action_id, quantite, prix_achat) VALUES (?, ?, ?, ?)");
+            $PortefeuilleReq->execute([$_SESSION['id'], $action_id, $quantite, $prix_total]);
+        }
+
     }
     if ($action == 'Vendre') {
         $nouv_arg_joueur = $arg_joueur['argent'] + $prix_total;
+
+        //Regarder si le portefeuille contient déjà l'action ou non et update en conséquence
+        if($Portefeuille) {
+            $nouvQtitPortef = $Portefeuille['quantite'] - $quantite;
+            $PortefeuilleMAJ = $bdd->prepare("UPDATE portefeuille SET quantite = ? WHERE action_id = ?");
+            $PortefeuilleMAJ->execute([$nouvQtitPortef, $action_id]);
+        }
+        else {
+            echo "Vous n'avez pas assez d'action de cette entreprise";
+        }
+
     }
 
     //MAJ de l'argent du joueur
@@ -62,5 +94,6 @@ try {
 
 
 header('Location: Marche.php');
+exit();
 //-------------------------------------- A FAIRE --------------------------------------//
     // IL FAUT CODER L'ACHAT ET LA VENTE D'ACTIONS, METTRE A JOUR LE PORTEFEUILLE, RENTRER LA TRANSACTION DANS L'HISTORIQUE,
