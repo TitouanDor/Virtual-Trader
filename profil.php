@@ -71,7 +71,7 @@ if(isset($_SESSION["error"])){
 
     <div class="box_action">
         <div class="titre">Vos Actions</div>
-            <div class="recherche">
+            <div class="boutonCentrer">
                 <form action="marche.php" method="post" >
                     <input type="text" name="searchAction" placeholder="nom entreprise">
                     <input type="submit" value="Rechercher">
@@ -90,7 +90,7 @@ if(isset($_SESSION["error"])){
 
     <div class="box_recherche_joueur">
     <div class="titre">Rechercher des joueurs</div>
-        <div class="recherche">
+        <div class="boutonCentrer">
             <form action="chercherJoueurScript.php" method="post" >
                     <input type="text" name="search" placeholder="e-mail/username">
                     <input type="submit" value="Rechercher">

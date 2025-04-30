@@ -73,10 +73,12 @@ $history = $historyReq->fetchAll();
     <p>Prénom: <?php echo htmlspecialchars($player['prenom']); ?></p>
     <p>Solde: <?php echo htmlspecialchars($player['argent']); ?></p>
     <?php if ($followButtonValue != "It's you"): ?>
+    <div class="boutonCentrer">
     <form method="POST" action="followScript.php">
         <input type="hidden" name="followed_user_id" value="<?php echo $playerId; ?>">
         <input type="submit" name="follow" value="<?php echo $followButtonValue?>">
     </form>
+    </div>
     <?php endif ?>
 </div>
 
