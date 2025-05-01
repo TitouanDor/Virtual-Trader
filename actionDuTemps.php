@@ -77,7 +77,7 @@ foreach ($actions as $action) {
 
 }
 // Donner dividendes si besoin
-$reqDividend = $bdd->prepare("SELECT id, dividende FROM actions WHERE date_dividende = ?");
+$reqDividend = $bdd->prepare("SELECT id, dividende, prix FROM actions WHERE date_dividende = ?");
 $reqDividend->execute([$currentMonth]);
 $actionsWithDividends = $reqDividend->fetchAll(PDO::FETCH_ASSOC);
 foreach ($actionsWithDividends as $actionWithDividends) {
@@ -90,7 +90,7 @@ foreach ($actionsWithDividends as $actionWithDividends) {
     foreach ($joueursAvecAction as $joueur) {
         $joueurId = $joueur['joueur_id'];
         $quantite = $joueur['quantite'];
-        $dividendeTotal = $dividendeParAction * $quantite;
+        $dividendeTotal = $actionWithDividends['prix']*$dividendeParAction * $quantite;
         $reqUpdateMoney = $bdd->prepare("UPDATE joueur SET argent = argent + ? WHERE id = ?");
         $reqUpdateMoney->execute([$dividendeTotal, $joueurId]);
         $reqHistory->execute([$actionId, $joueurId, $dividendeParAction, 'dividende', $currentMonth, $currentYear]);
