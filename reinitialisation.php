@@ -1,5 +1,4 @@
-<?php
-?>
+<?php session_start(); ?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -35,6 +34,12 @@
                 </label>
             </div>
         </form>
+
+        <?php if(isset($_SESSION["rei"]) && $_SESSION["rei"] == false):?>
+        <p>
+            Réinitialisation impoosible
+        </p>
+        <?php endif;?>
     </div>
 
     <div class="banniere">
