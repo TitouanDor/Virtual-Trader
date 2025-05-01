@@ -23,6 +23,9 @@ if(isset($_POST["email"]) && isset($_POST["mdp"])) {
         $req = $bdd->prepare("UPDATE joueur SET argent = 10000 WHERE id = ?");
         $req->execute([$_SESSION['id']]);
         $req->fetch();
+        $req = $bdd->prepare("DELETE FROM historique WHERE joueur_id = ?");
+        $req->execute([$_SESSION['id']]);
+        $req->fetch();
         $_SESSION['rei'] = true;
         header('Location: profil.php');
         exit();
