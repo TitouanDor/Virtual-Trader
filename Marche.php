@@ -48,7 +48,7 @@ foreach ($actions as &$action) {
 <body>
     <div class="bandeau">Marché</div>
     <div class="groupeAction">
-        <?php foreach ($actions as $action): ?>
+        <?php foreach ($actions as &$action): ?>
             <div class="action">
                 <form action="buySellScript.php" method="POST" name="form_<?php echo $action['id']?>">
                     <h2><?php echo htmlspecialchars($action['nom']); ?></h2>
@@ -74,7 +74,7 @@ foreach ($actions as &$action) {
         <?php endforeach; ?>
     </div>
 
-    <br><br>
+    <br><br><br>
 
     <div class="banniere">
         <a href="profil.php">Profil</a>
