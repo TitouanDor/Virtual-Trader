@@ -1,0 +1,22 @@
+.box_connection{
+    background-color: white;
+    border: gray;
+    border-radius: 10px;
+    text-align: center;
+    border-style: solid;
+    height: fit-content;
+    width: fit-content;
+    padding: 5px;
+    padding-left: 20px;
+    padding-right: 20px;
+    margin: auto;
+    margin-top: 30vh;
+}
+.box_connection p{
+    color:red;
+    font-weight: bold;
+}
+
+.group-from{
+    margin-bottom: 9px;
+}

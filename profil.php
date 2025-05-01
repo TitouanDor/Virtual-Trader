@@ -109,6 +109,7 @@ if(isset($_SESSION["error"])){
         <a href="Marche.php">Marché</a>
         <a href="classement.php?from=profil">Classement</a>
         <a href="logout.php">Déconnexion</a>
+        <a href="reinitialisation.php">Réinitialisation</a>
     </div>
 </body>
 </html>
