@@ -1,4 +1,8 @@
-<?php session_start(); ?>
+<?php session_start();
+if (!isset($_SESSION['id'])) {
+    header('location: index.html');
+    exit();
+}?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -11,7 +15,7 @@
 
     <div class="box_connection">
         <p>Réinitialiser mon compte</p>
-        <form action="connectionScript.php" method="post">
+        <form action="reiniScript.php" method="post">
             <div class="group-from">
                 <label for="email">
                     <input type="text" name="email" id="email" placeholder="Adresse e-mail">
@@ -25,7 +29,7 @@
             <div class="group-from">
                 <label>
                     êtes-vous sur ?
-                    <input type="checkbox" name="sur?">
+                    <input type="checkbox" name="yes">
                 </label>
             </div>
             <div class="group-from">
