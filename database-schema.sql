@@ -19,7 +19,8 @@ CREATE TABLE IF NOT EXISTS actions (
     description TEXT,
     prix DECIMAL(10, 2) NOT NULL,
     dividende DECIMAL(10, 2) DEFAULT 0.00,
-    date_dividende TINYINT DEFAULT NULL -- Mois de distribution du dividende (1-12)
+    date_dividende TINYINT DEFAULT NULL, -- Mois de distribution du dividende (1-12)
+    tt_pourcentage INT DEFAULT 0
     );
 
 -- Table des portefeuilles (actions possédées par les joueurs)

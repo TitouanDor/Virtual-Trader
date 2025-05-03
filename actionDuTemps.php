@@ -26,12 +26,13 @@ $updateGameStateReq = $bdd->prepare("UPDATE game_state SET current_month = ?, cu
 $updateGameStateReq->execute([$currentMonth, $currentYear]);
 
 // Recup tt actions pour MAJ
-$actionsReq = $bdd->query("SELECT id, prix FROM actions");
+$actionsReq = $bdd->query("SELECT id, prix,tt_pourcentage FROM actions");
 $actions = $actionsReq->fetchAll();
 
 foreach ($actions as $action) {
     $actionId = $action['id'];
     $initialPrice = $action['prix'];
+    $tt_pourcentage = $action['tt_pourcentage'];
 
     // Verif derniers prix
     $lastPriceReq = $bdd->prepare("SELECT valeur_action FROM cours_marche WHERE action_id = ? ORDER BY game_year DESC, game_month DESC LIMIT 1");
@@ -43,7 +44,15 @@ foreach ($actions as $action) {
         $lastPrice = $lastPrice['valeur_action'];
 
         // Change le prix de l'action
-        $change = rand(-3, 3) / 100;
+        do{
+            $change = rand(-3, 3);
+        }while(abs($change + $tt_pourcentage) <= 10);
+
+        $tt_pourcentage = $change + $tt_pourcentage;
+        $lastPriceReq = $bdd->prepare("UPDATE action SET tt_pourcentage = ? WHERE id = ?");
+        $lastPriceReq->execute([$tt_pourcentage, $actionId]);
+
+        $change = $change/100;
         $newPrice = $lastPrice * (1 + $change);
 
 
