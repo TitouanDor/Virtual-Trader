@@ -46,16 +46,14 @@ foreach ($actions as $action) {
         // Change le prix de l'action
         do{
             $change = rand(-3, 3);
-        }while(abs($change + $tt_pourcentage) <= 10);
+        }while(abs($change + $tt_pourcentage) > 10);
 
         $tt_pourcentage = $change + $tt_pourcentage;
-        $lastPriceReq = $bdd->prepare("UPDATE action SET tt_pourcentage = ? WHERE id = ?");
+        $lastPriceReq = $bdd->prepare("UPDATE actions SET tt_pourcentage = ? WHERE id = ?");
         $lastPriceReq->execute([$tt_pourcentage, $actionId]);
 
         $change = $change/100;
         $newPrice = $lastPrice * (1 + $change);
-
-
         //----------------------- CHANGER QUE SI ENTRE + ou - 10%, ON NE PEUT AGMENTER MAX QUE DE +-10% -----------------------//
 
 
