@@ -18,9 +18,9 @@ try {
 
 
 if (($_SERVER["REQUEST_METHOD"] == "POST") && !(empty($_POST['searchAction']))) { //cherche l'action chercher
-    $actionsReq = $bdd->prepare("SELECT id, nom, description, prix FROM actions WHERE nom = ?");
-    $actionsReq->execute([$_POST["searchAction"]]);
-    $actions = $actionsReq->fetchAll();
+    $actionsReq = $bdd->prepare("SELECT id, nom, description, prix FROM actions WHERE nom LIKE ?");
+    $actionsReq->execute([$_POST['searchAction'].'%']);
+    $actions = $actionsReq->fetchAll(); 
 } else{ // Recup toutes les actions
     $actionsReq = $bdd->prepare("SELECT id, nom, description, prix FROM actions");
     $actionsReq->execute();
