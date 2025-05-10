@@ -41,8 +41,8 @@ foreach ($actions as &$action) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="CSSFile/general.css">
-    <link rel="stylesheet" href="CSSFile/marche.css">
+    <link rel="stylesheet" href="../CSSFile/general.css">
+    <link rel="stylesheet" href="../CSSFile/marche.css">
     <title>Marché</title>
 </head>
 <body>

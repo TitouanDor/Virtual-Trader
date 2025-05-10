@@ -7,8 +7,8 @@ if (!isset($_SESSION['id'])) {
 <html lang="fr">
 <head>
     <title>Réinitialisation</title>
-    <link rel="stylesheet" href="CSSFile/general.css">
-    <link rel="stylesheet" href="CSSFile/reinitialisation.css">
+    <link rel="stylesheet" href="../CSSFile/general.css">
+    <link rel="stylesheet" href="../CSSFile/reinitialisation.css">
 </head>
 
 <body>

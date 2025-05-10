@@ -46,8 +46,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="CSSFile/general.css">
-    <link rel="stylesheet" href="CSSFile/mdp.css">
+    <link rel="stylesheet" href="../CSSFile/general.css">
+    <link rel="stylesheet" href="../CSSFile/mdp.css">
     <title>Recover Password</title>
 </head>
 <body>

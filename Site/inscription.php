@@ -7,8 +7,8 @@ endif;
 <head>
     <meta charset="UTF-8">
     <title>Inscription</title>
-    <link rel="stylesheet" href="CSSFile/general.css">
-    <link rel="stylesheet" href="CSSFile\inscription.css">
+    <link rel="stylesheet" href="../CSSFile/general.css">
+    <link rel="stylesheet" href="../CSSFile/inscription.css">
 </head>
 <body>
 <div>

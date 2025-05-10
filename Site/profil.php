@@ -43,8 +43,8 @@ if(isset($_SESSION["error"])){
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mon profil</title>
-    <link rel="stylesheet" href="CSSFile/general.css">
-    <link rel="stylesheet" href="CSSFile/profil.css">
+    <link rel="stylesheet" href="../CSSFile/general.css">
+    <link rel="stylesheet" href="../CSSFile/profil.css">
 </head>
 <body>
     <div class="bandeau">Bienvenue sur votre profil</div>
@@ -65,7 +65,7 @@ if(isset($_SESSION["error"])){
     <div class="box_action">
         <div class="titre">Vos Actions</div>
             <div class="boutonCentrer">
-                <form action="marche.php" method="post" >
+                <form action="Marche.php" method="post" >
                     <input type="text" name="searchAction" placeholder="nom entreprise">
                     <input type="submit" value="Rechercher">
                 </form>
