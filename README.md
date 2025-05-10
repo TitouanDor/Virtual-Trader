@@ -6,14 +6,15 @@ Virtual-Trader est une application web qui simule un marché boursier virtuel. L
 
 ## Installation et Configuration
 
-1.  Mettre en place un serveur web avec support PHP et MySQL (Par exemple XAMPP).
+1.  Mettre en place un serveur web avec support PHP et MySQL (Avec XAMPP, lancer 'MySQL' et 'Apache').
 2.  Créer une base de données MySQL nommée `virtual_trader`.
 3.  Importer le fichier `database-schema.sql` dans la base de données.
-4.  Copier tous les fichiers du projet dans le répertoire de votre serveur web.
+4.  Copier tous les fichiers du projet dans le répertoire de votre serveur web ou ouvrir le dossier dans l'éditeur de code 'PHP Storm'.
 
 ## Lancer l'Application
 
-1. Accéder à l'application via votre navigateur web en visitant l'URL où vous avez téléchargé les fichiers (ex: `http://localhost/Virtual-Trader/index.php`).
+1. Accéder à l'application via votre navigateur web en visitant l'URL où vous avez téléchargé les fichiers (ex: `http://localhost/Virtual-Trader/index.php`)
+(Si vous utilisez PHP Storm, des icônes de navigateur apparaîtrons en haut à droite. Cliquez sur celui que vous voulez utiliser et le jeu sera lancé)
 
 
 ## Accréditation
