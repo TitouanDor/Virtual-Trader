@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS portefeuille (
 
 -- Table des abonnements/suivis (utilisateurs qui suivent d'autres utilisateurs)
 CREATE TABLE IF NOT EXISTS followers (
-    follower_id INT AUTO_INCREMENT PRIMARY KEY,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     followed_user_id INT NOT NULL,
     FOREIGN KEY (user_id) REFERENCES joueur(id) ON DELETE CASCADE,
